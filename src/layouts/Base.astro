@@ -8,7 +8,7 @@ interface Props {
 }
 const { title, description, jsonLd, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
-const adsClient = import.meta.env.PUBLIC_ADSENSE_CLIENT; // ca-pub-XXXXXXXXXXXXXXXX
+const adsClient = import.meta.env.PUBLIC_ADSENSE_CLIENT || 'ca-pub-3878753098566088';
 const year = new Date().getFullYear();
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const path = Astro.url.pathname;
@@ -45,6 +45,7 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={new URL('/og.png', Astro.site).href} />
     {ld.map((o) => <script type="application/ld+json" set:html={JSON.stringify(o)} />)}
+    <meta name="google-adsense-account" content={adsClient} />
     {adsClient && (
       <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}`} crossorigin="anonymous"></script>
     )}
