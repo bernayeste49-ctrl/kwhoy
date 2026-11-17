@@ -1,0 +1,45 @@
+---
+// Tabla de coste de uso de aparatos con los precios PVPC medios de los últimos 30 días.
+// Incluye impuesto eléctrico e IVA sobre la energía, para que el dato se parezca a lo que pagas.
+import { periodAverages, shortDate } from '../lib/prices.js';
+import { REGULADO } from '../lib/tarifas.js';
+interface Row { n: string; kwh: number; mes?: number }
+interface Props { rows: Row[]; caption?: string; unidad?: string }
+const { rows, caption, unidad = 'Por uso' } = Astro.props;
+const pa = periodAverages(30);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const eur = (v: number) => v < 1
+  ? `${(v * 100).toLocaleString('es-ES', { maximumFractionDigits: 0 })} cént.`
+  : `${v.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
+const c = (kwh: number, p: number) => eur(kwh * p * tax);
+const conMes = rows.some((r) => r.mes);
+---
+<div class="tabla-coste">
+  <table>
+    {caption && <caption>{caption}</caption>}
+    <thead>
+      <tr><th>Aparato y uso</th><th class="num">kWh</th><th class="num">{unidad} en valle</th><th class="num">{unidad}, media</th><th class="num">{unidad} en punta</th>{conMes && <th class="num">Al mes, media</th>}</tr>
+    </thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          <td>{r.n}</td>
+          <td class="num">{r.kwh.toLocaleString('es-ES', { maximumFractionDigits: 2 })}</td>
+          <td class="num barata">{c(r.kwh, pa.valle)}</td>
+          <td class="num">{c(r.kwh, pa.media)}</td>
+          <td class="num cara">{c(r.kwh, pa.punta)}</td>
+          {conMes && <td class="num">{r.mes ? eur(r.kwh * r.mes * pa.media * tax) : '—'}</td>}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="muted nota">Calculado con el precio medio del PVPC del {shortDate(pa.desde)} al {shortDate(pa.hasta)}: valle {(pa.valle * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €/kWh, media {(pa.media * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €/kWh y punta {(pa.punta * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €/kWh, con impuesto eléctrico e IVA incluidos. No incluye la parte fija de la factura (potencia y contador). Se actualiza cada día.</p>
+</div>
+<style>
+  .tabla-coste { overflow-x: auto; margin: 16px 0 8px; }
+  .tabla-coste table { min-width: 560px; }
+  .tabla-coste caption { text-align: left; font-weight: 600; padding-bottom: 8px; }
+  .barata { color: var(--barata); font-weight: 600; }
+  .cara { color: var(--cara); font-weight: 600; }
+  .nota { font-size: 0.88rem; }
+</style>

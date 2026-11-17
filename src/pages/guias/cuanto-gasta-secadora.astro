@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-secadora/';
+const title = 'Cuánto gasta una secadora por ciclo: bomba de calor vs condensación';
+const description = 'Cuántos kWh gasta una secadora por ciclo según su tipo, cuánto cuesta cada secado y al mes con el precio actual de la luz, y cómo leer su etiqueta energética.';
+const faqs = [
+  ['¿Cuánto cuesta poner la secadora?', 'Una secadora de bomba de calor gasta alrededor de 1,5 kWh por ciclo; una de condensación sin bomba de calor, unos 4,5 kWh. La tabla de esta página calcula cuánto cuesta cada una con el precio de la luz actual.'],
+  ['¿Cómo sé cuánto gasta mi secadora?', 'Mira la etiqueta energética. Desde julio de 2025 indica los kWh por cada 100 ciclos: divide entre 100 y tienes el consumo de un ciclo de referencia. Las etiquetas anteriores daban el consumo anual para 160 ciclos.'],
+  ['¿Sale a cuenta cambiar a una de bomba de calor?', 'Si usas mucho la secadora, sí: gasta de dos a tres veces menos por ciclo. Con 3 secados a la semana, la diferencia es de unos 40 kWh al mes.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta una secadora por ciclo</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['OCU: nueva etiqueta energética de las secadoras', 'https://www.ocu.org/electrodomesticos/secadora/noticias/secadoras-nueva-etiqueta-energetica'],
+    ['Endesa: cuánto consume una secadora', 'https://www.endesa.com/es/blog/blog-de-endesa/luz/cuanto-consume-secadora'],
+    ['Selectra: secadora, deshumidificador o tendedero eléctrico', 'https://selectra.es/energia/noticias/secar-ropa-2026-secadora-tendedero-electrico'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">La diferencia está en el tipo de secadora: <strong>una de bomba de calor gasta unos 1,5 kWh por ciclo</strong>, mientras que una de condensación clásica ronda los 4,5 kWh. Y como cualquier aparato grande, sale mucho más barata en las horas valle.</p>
+
+    <CosteTabla caption="Coste de un secado con carga completa" unidad="Por ciclo" rows={[
+      { n: 'Bomba de calor (eficiente)', kwh: 1.5, mes: 12 },
+      { n: 'Condensación sin bomba de calor', kwh: 4.5, mes: 12 },
+      { n: 'Evacuación (las más antiguas)', kwh: 5.0, mes: 12 },
+    ]} />
+    <p class="muted">Al mes: 3 secados por semana. Los kWh son valores típicos; el de tu modelo está en su etiqueta energética.</p>
+
+    <section class="prose">
+      <h2>Cómo leer la etiqueta</h2>
+      <p>Desde el 1 de julio de 2025 las secadoras que se venden en la UE llevan una etiqueta nueva, con clases de la A a la G y el consumo expresado en <strong>kWh por cada 100 ciclos</strong>. Si pone 150 kWh/100 ciclos, cada secado de referencia gasta 1,5 kWh. Las etiquetas antiguas (A+++, A++...) daban el consumo de un año de 160 ciclos: divide entre 160.</p>
+
+      <h2>Cómo gastar menos</h2>
+      <ol>
+        <li><strong>Centrifuga bien antes.</strong> Cuanta menos agua lleve la ropa, menos trabaja la secadora: usa el centrifugado más alto que admita cada prenda.</li>
+        <li><strong>Prográmala de noche o en fin de semana.</strong> Muchas tienen inicio diferido. En periodo valle el kWh suele costar menos de la mitad que en punta; mira el <a href="/precio-luz-manana/">precio de la luz de mañana</a> para elegir hora.</li>
+        <li><strong>Limpia el filtro en cada uso</strong> y el condensador cuando lo indique el fabricante.</li>
+        <li><strong>Llénala, sin pasarte.</strong> Media carga gasta casi lo mismo que una completa.</li>
+        <li><strong>Tiende cuando puedas.</strong> Secar al aire es gratis; la secadora es para los días que no hay otra opción.</li>
+      </ol>
+      <p>Para un cálculo con tu aparato y la hora exacta, usa la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

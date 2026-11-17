@@ -185,3 +185,15 @@ export function dayInsights(day) {
 
 export function monthSlug(ym) { const [y, m] = ym.split('-').map(Number); return `${MESES_[m - 1]}-${y}`; }
 export function slugToMonth(slug) { const [mes, y] = slug.split('-'); return `${y}-${String(MESES_.indexOf(mes) + 1).padStart(2, '0')}`; }
+
+/** Precio medio PVPC (€/kWh, sin impuestos) por periodo 2.0TD en los últimos n días */
+export function periodAverages(n = 30) {
+  const ds = availableDates().slice(0, n).map((iso) => getDay(iso));
+  const acc = { valle: [], llano: [], punta: [], todas: [] };
+  for (const d of ds) for (const h of d.hours) { acc[h.periodo].push(h.price); acc.todas.push(h.price); }
+  const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+  return {
+    dias: ds.length, desde: ds[ds.length - 1].iso, hasta: ds[0].iso,
+    valle: mean(acc.valle), llano: mean(acc.llano), punta: mean(acc.punta), media: mean(acc.todas),
+  };
+}

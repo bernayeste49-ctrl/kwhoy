@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-frigorifico/';
+const title = 'Cuánto gasta un frigorífico al día, al mes y al año';
+const description = 'Cuántos kWh gasta una nevera según su etiqueta energética, cuánto cuesta al mes con el precio actual de la luz y cuándo compensa cambiarla por una más eficiente.';
+const faqs = [
+  ['¿Cuánto gasta una nevera al mes?', 'Un frigorífico combi eficiente gasta unos 8-12 kWh al mes; uno antiguo puede pasar de 30. La tabla de esta página calcula cuánto cuesta cada caso con el precio actual de la luz.'],
+  ['¿Dónde veo el consumo de mi frigorífico?', 'En la etiqueta energética aparece el consumo anual en kWh. Divide entre 12 para el mes o entre 365 para el día.'],
+  ['¿Sirve de algo desenchufarlo?', 'Solo si lo vas a dejar vacío mucho tiempo (vacaciones largas), con la puerta entreabierta para que no salga moho. Para el día a día, lo que importa es la temperatura, el sitio donde está y el estado de las gomas.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un frigorífico</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Selectra: eficiencia energética de los electrodomésticos', 'https://climate.selectra.com/es/eficiencia-energetica'],
+    ['Iberdrola: consumo de los electrodomésticos según el IDAE', 'https://www.iberdrola.com/sostenibilidad/que-es-eficiencia-energetica-recomendaciones-alcanzarla'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">El frigorífico no gasta mucho en cada momento, pero funciona las 24 horas: <strong>un modelo eficiente ronda los 100-150 kWh al año y uno antiguo puede superar los 350</strong>. Según el IDAE, es el electrodoméstico que más electricidad consume en un hogar.</p>
+
+    <CosteTabla caption="Coste de tener el frigorífico enchufado" unidad="Al día" rows={[
+      { n: 'Frigorífico eficiente (≈100 kWh al año)', kwh: 0.27, mes: 30 },
+      { n: 'Combi de gama media (≈250 kWh al año)', kwh: 0.68, mes: 30 },
+      { n: 'Frigorífico antiguo (≈400 kWh al año)', kwh: 1.1, mes: 30 },
+    ]} />
+    <p class="muted">El frigorífico consume a todas horas, así que la columna «media» es la que mejor refleja su coste real.</p>
+
+    <section class="prose">
+      <h2>¿Compensa cambiar una nevera vieja?</h2>
+      <p>Haz la cuenta con la tabla: la diferencia entre un frigorífico de 400 kWh al año y uno de 100 kWh son 300 kWh anuales. Multiplicados por el precio medio de la luz, te da el ahorro de cada año. Si tu nevera tiene más de 12-15 años o las gomas ya no cierran bien, suele compensar en la vida útil del aparato nuevo, pero no tiene sentido cambiar una nevera que funciona bien solo por ahorrar unos pocos euros.</p>
+
+      <h2>Cómo gastar menos</h2>
+      <ul>
+        <li><strong>Temperatura correcta:</strong> 4-5 °C en el frigorífico y -18 °C en el congelador. Más frío no conserva mejor y sí gasta más.</li>
+        <li><strong>Lejos del calor:</strong> no la pongas junto al horno ni donde le dé el sol, y deja unos centímetros de separación con la pared para que ventile la parte trasera.</li>
+        <li><strong>Comprueba las gomas:</strong> si un papel cogido con la puerta cerrada se saca sin resistencia, no cierran bien.</li>
+        <li><strong>Descongela</strong> si se forma una capa de hielo de más de unos milímetros.</li>
+        <li><strong>No metas comida caliente</strong> y abre la puerta lo justo.</li>
+      </ul>
+      <p>¿Quieres ver cuánto te cuestan los demás aparatos? Prueba la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a> o estima tu factura completa con el <a href="/simulador-factura-luz/">simulador de factura</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-aire-acondicionado/';
+const title = '¿Cuánto gasta un aire acondicionado por hora? Coste en frío y en calor';
+const description = 'Cuántos kWh consume un aire acondicionado de 2.250, 3.000 o 4.500 frigorías, cuánto cuesta por hora y al mes con el precio actual de la luz, y cómo gastar menos.';
+const faqs = [
+  ['¿Cuánto consume un aire acondicionado de 3.000 frigorías?', 'Unos 3,5 kW de frío. Con una eficiencia (EER) de 3,5, consume alrededor de 1 kWh por cada hora a plena potencia. Un equipo inverter, una vez alcanzada la temperatura, baja bastante de esa cifra.'],
+  ['¿Gasta más el aire acondicionado en frío o en calor?', 'Depende del clima y de la diferencia de temperatura con la calle. Como bomba de calor suele ser la calefacción eléctrica más barata: por cada kWh de luz entrega de 3 a 4 kWh de calor.'],
+  ['¿Es mejor dejarlo encendido todo el día?', 'Con un equipo inverter y una casa bien aislada, mantener una temperatura moderada suele gastar menos que apagarlo y encenderlo a tope varias veces. Lo que más dispara el consumo es fijar temperaturas extremas.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>¿Cuánto gasta un aire acondicionado por hora?</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Bosch Home Comfort: cómo calcular el consumo del aire acondicionado', 'https://www.bosch-homecomfort.com/es/es/conocimiento/aire-acondicionado/calcular-el-consumo-de-aire-acondicionado/'],
+    ['OCU: potencia del aire acondicionado', 'https://www.ocu.org/vivienda-y-energia/aire-acondicionado/consejos/potencia-aire-acondicionado'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">Un split de 3.000 frigorías consume alrededor de <strong>1 kWh por hora</strong> a plena potencia. Con los precios del último mes, eso son unos {Math.round(pa.valle * 1.27 * 100)} céntimos la hora en periodo valle y unos {Math.round(pa.punta * 1.27 * 100)} en punta.</p>
+
+    <CosteTabla caption="Coste por hora de funcionamiento a plena potencia" unidad="Por hora" rows={[
+      { n: 'Split 2.250 frigorías (habitación)', kwh: 0.75, mes: 180 },
+      { n: 'Split 3.000 frigorías (salón de unos 30 m²)', kwh: 1.0, mes: 180 },
+      { n: 'Split 4.500 frigorías (salón grande)', kwh: 1.5, mes: 180 },
+      { n: 'Aire acondicionado portátil', kwh: 1.2, mes: 180 },
+    ]} />
+    <p class="muted">La columna mensual supone 6 horas al día durante 30 días. Los inverter, una vez que la casa está a la temperatura fijada, trabajan bastante por debajo de su potencia máxima, así que el gasto real suele ser menor.</p>
+
+    <section class="prose">
+      <h2>Cómo calcular el consumo de tu aparato</h2>
+      <p>Las frigorías miden el frío que da el aparato, no la luz que gasta. Para pasar a consumo eléctrico necesitas dos datos de la ficha técnica o de la etiqueta energética:</p>
+      <ol>
+        <li><strong>Potencia de refrigeración en kW.</strong> Si solo aparece en frigorías, divide entre 860: 3.000 frigorías son unos 3,5 kW de frío.</li>
+        <li><strong>Eficiencia (EER o SEER).</strong> Divide la potencia de frío entre la eficiencia: 3,5 kW ÷ 3,5 = 1 kW eléctrico. Ese es el consumo por hora a plena potencia.</li>
+      </ol>
+      <p>Si la ficha ya da la «potencia absorbida» o el «consumo nominal» en W o kW, ese es directamente el dato que buscas.</p>
+
+      <h2>En invierno, como bomba de calor</h2>
+      <p>Usado en modo calor, el mismo split es de las formas más baratas de calentar una habitación con electricidad. Su eficiencia en calor (COP o SCOP) suele estar entre 3 y 4: por cada kWh de luz da de 3 a 4 kWh de calor. Un radiador o un calefactor eléctrico, en cambio, da 1 kWh de calor por cada kWh que gasta. Lo comparamos con detalle en la guía de <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a>.</p>
+
+      <h2>Cómo gastar menos</h2>
+      <ul>
+        <li><strong>Fija una temperatura razonable.</strong> En verano, entre 25 y 26 °C; en invierno, entre 19 y 21 °C. Cada grado de más o de menos hace trabajar más al compresor.</li>
+        <li><strong>Aprovecha las horas baratas.</strong> Enfriar o calentar la casa un poco antes de la franja punta (de 18:00 a 22:00 los laborables) y mantener después cuesta menos. Mira el <a href="/">precio de la luz de hoy</a> para ver qué horas salen mejor.</li>
+        <li><strong>Limpia los filtros</strong> cada pocas semanas en temporada: un filtro sucio reduce el rendimiento.</li>
+        <li><strong>Cierra puertas y baja persianas</strong> en las horas de más sol. Enfriar menos espacio es la forma más directa de gastar menos.</li>
+        <li><strong>Revisa la potencia contratada.</strong> Un split de 3.000 frigorías arranca con poco más de 1 kW, así que normalmente no obliga a subirla. Compruébalo con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a>.</li>
+      </ul>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

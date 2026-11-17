@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-vitroceramica-induccion/';
+const title = 'Cuánto gasta una placa de inducción o una vitrocerámica';
+const description = 'Cuántos kWh gasta cocinar con inducción o con vitrocerámica, cuánto cuesta hervir agua o hacer la comida con el precio actual de la luz, y cuál conviene.';
+const faqs = [
+  ['¿Qué gasta menos, inducción o vitrocerámica?', 'La inducción. Calienta directamente el recipiente, así que aprovecha más la energía y tarda menos. La vitrocerámica radiante calienta primero el cristal y pierde más calor.'],
+  ['¿Cuánta potencia tiene una placa de inducción?', 'Una placa de tres o cuatro zonas suma entre 6 y 7,4 kW si se encienden todas al máximo. La mayoría limitan la potencia total para no superar lo que tienes contratado; mira la configuración en el manual.'],
+  ['¿Cuesta mucho hervir agua?', 'Hervir un litro de agua necesita unos 0,1 kWh: alrededor de un céntimo y medio o dos con el precio medio actual. Con tapa, menos.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta una placa de inducción o una vitrocerámica</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['IDAE: Guía práctica de la energía', 'https://www.idae.es/sites/default/files/documentos/Guia-de-la-energia-idae/Guia_Energia_2007.pdf'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">Preparar la comida de un día con placa eléctrica gasta en torno a <strong>1 kWh con inducción y algo más con vitrocerámica</strong>. Es menos de lo que parece: lo que encarece la cocina es el horno y hacerlo todo en la franja punta.</p>
+
+    <CosteTabla caption="Coste de cocinar con placa eléctrica" unidad="Por uso" rows={[
+      { n: 'Hervir 1 litro de agua (inducción)', kwh: 0.12 },
+      { n: 'Hervir 1 litro de agua (vitrocerámica)', kwh: 0.15 },
+      { n: 'Cocinar una comida, 1 hora (inducción)', kwh: 1.0, mes: 30 },
+      { n: 'Cocinar una comida, 1 hora (vitrocerámica)', kwh: 1.3, mes: 30 },
+    ]} />
+    <p class="muted">Valores orientativos. Hervir 1 litro desde 15 °C requiere 0,1 kWh de calor; el resto son pérdidas, mayores en la vitrocerámica.</p>
+
+    <section class="prose">
+      <h2>Por qué la inducción gasta menos</h2>
+      <p>La placa de inducción crea un campo magnético que calienta directamente el fondo del recipiente (por eso necesita sartenes y ollas aptas). La vitrocerámica radiante calienta una resistencia bajo el cristal, y ese calor tiene que pasar después a la olla: se pierde más por el camino y además tarda más en enfriarse, aunque eso último lo puedes aprovechar.</p>
+
+      <h2>Cómo gastar menos al cocinar</h2>
+      <ol>
+        <li><strong>Usa tapa.</strong> El agua hierve antes y mantenerla hirviendo necesita mucha menos potencia.</li>
+        <li><strong>Ajusta el recipiente a la zona.</strong> Una olla pequeña en un fuego grande desperdicia calor.</li>
+        <li><strong>Baja la potencia al hervir.</strong> Para mantener el hervor basta con un nivel bajo.</li>
+        <li><strong>En vitrocerámica, apaga antes.</strong> El calor residual termina la cocción.</li>
+        <li><strong>Olla exprés y hervidor.</strong> Para legumbres y guisos largos, la olla a presión acorta mucho el tiempo; para calentar agua, un hervidor eléctrico es muy eficiente.</li>
+        <li><strong>Cocina en lotes</strong> y aprovecha las horas baratas cuando puedas. El <a href="/">precio de la luz de hoy</a> te dice cuáles son.</li>
+      </ol>
+      <p>Si al encender la placa y el horno a la vez salta el limitador, revisa tu <a href="/calculadora-potencia-contratada/">potencia contratada</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-horno-electrico/';
+const title = 'Cuánto gasta un horno eléctrico (y si sale mejor el microondas o la freidora de aire)';
+const description = 'Cuántos kWh gasta un horno eléctrico por uso, cuánto cuesta con el precio actual de la luz y cuándo compensa usar el microondas o la freidora de aire.';
+const faqs = [
+  ['¿Cuánto cuesta encender el horno una hora?', 'Un horno doméstico de 60-70 litros gasta en torno a 1 kWh en una hora de horneado a temperatura media, porque el termostato lo enciende y apaga. La tabla de esta página lo traduce a euros con el precio actual de la luz.'],
+  ['¿Gasta menos con el ventilador?', 'Depende del horno. En muchos modelos el modo con ventilador gasta menos por ciclo, pero en otros es al revés. Tu etiqueta energética da las dos cifras: modo convencional y circulación forzada.'],
+  ['¿Freidora de aire u horno?', 'Para cantidades pequeñas, la freidora de aire o el microondas gastan bastante menos, porque calientan un espacio mucho más pequeño. Para una bandeja grande o varias tandas, la ventaja desaparece.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un horno eléctrico</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['OCU: la etiqueta energética de los hornos', 'https://www.ocu.org/electrodomesticos/campanas/noticias/los-hornos-cambian-de-etiqueta'],
+    ['Endesa: cuánto consume un horno eléctrico', 'https://www.endesa.com/es/blog/blog-de-endesa/luz/cuanto-consume-horno-electrico'],
+    ['Selectra: horno con o sin ventilador', 'https://selectra.es/energia/noticias/horno-2026-ventilador-conveccion-consumo-modo'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">Un horno eléctrico normal gasta <strong>entre 0,7 y 1 kWh por ciclo</strong> según su etiqueta energética, y alrededor de 1 kWh en una hora de horneado. Para raciones pequeñas, el microondas y la freidora de aire salen bastante más baratos.</p>
+
+    <CosteTabla caption="Coste de cocinar con cada aparato" unidad="Por uso" rows={[
+      { n: 'Horno: 1 hora de horneado', kwh: 1.0, mes: 12 },
+      { n: 'Horno: precalentar 15 minutos', kwh: 0.4 },
+      { n: 'Freidora de aire: 20 minutos', kwh: 0.4, mes: 12 },
+      { n: 'Microondas de 800 W: 5 minutos', kwh: 0.07, mes: 60 },
+    ]} />
+    <p class="muted">Al mes: horno y freidora 3 veces por semana, microondas 2 veces al día. Valores orientativos: la freidora y el microondas no tienen etiqueta energética oficial.</p>
+
+    <section class="prose">
+      <h2>Qué dice la etiqueta de tu horno</h2>
+      <p>Los hornos eléctricos llevan etiqueta energética europea, con clases de A+++ a D. Lo útil no es la letra, sino las dos cifras de <strong>consumo en kWh por ciclo</strong>: una en modo convencional (calor arriba y abajo) y otra con circulación forzada (ventilador). Ese ciclo es una prueba normalizada que calienta una carga estándar, así que sirve para comparar modelos.</p>
+
+      <h2>Cómo gastar menos</h2>
+      <ul>
+        <li><strong>No abras la puerta sin necesidad.</strong> Cada vez que la abres, el horno tiene que recuperar temperatura.</li>
+        <li><strong>Precalienta solo cuando la receta lo pide</strong> (masas, bizcochos). Para asados largos casi nunca hace falta.</li>
+        <li><strong>Apágalo unos minutos antes.</strong> El calor residual termina la cocción gratis.</li>
+        <li><strong>Aprovecha cada encendido</strong>: hornea dos cosas a la vez o deja algo preparado para otro día.</li>
+        <li><strong>Para una ración, usa el microondas o la freidora.</strong> Calentar 70 litros de aire para un plato es lo que encarece el horno.</li>
+        <li><strong>Evita la franja punta si puedes.</strong> Entre semana, de 18:00 a 22:00 la luz suele estar en su precio más alto, justo a la hora de la cena. Míralo en el <a href="/">precio de la luz de hoy</a>.</li>
+      </ul>
+      <p>Si el horno coincide con la vitro y la lavadora, revisa que tu potencia contratada aguante: la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a> te lo dice.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

@@ -1,0 +1,59 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages, getMonth, availableMonths, monthName, fmtPrice } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const mes = getMonth(availableMonths()[0]);
+const path = '/guias/como-se-calcula-precio-luz-pvpc/';
+const title = 'Cómo se calcula el precio de la luz PVPC y por qué cambia cada hora';
+const description = 'Qué componentes forman el precio de la luz PVPC en 2026 (mercado diario, futuros, peajes y cargos), quién lo publica, a qué hora sale el de mañana y por qué varía tanto.';
+const faqs = [
+  ['¿A qué hora se publica el precio de la luz de mañana?', 'Red Eléctrica publica cada tarde los precios PVPC del día siguiente. En kWhoy los comprobamos varias veces cada tarde y los publicamos en cuanto están disponibles, en la página del precio de la luz de mañana.'],
+  ['¿Por qué hay horas con la luz casi gratis?', 'Cuando hay mucho sol o viento, la oferta renovable es tan grande que el precio del mercado mayorista cae a cero o incluso por debajo. Lo que queda en esas horas son, sobre todo, los peajes y cargos.'],
+  ['¿El PVPC sigue dependiendo del mercado diario?', 'Sí, pero menos que antes. Desde 2024 una parte del precio de la energía se calcula con los mercados a plazo (futuros), y en 2026 esa parte es ya del 55 %. El 45 % restante sigue el mercado diario.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cómo se calcula el precio de la luz PVPC</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Red Eléctrica: API de datos del mercado (precio PVPC)', 'https://www.ree.es/es/apidatos'],
+    ['OCU: evolución del precio de la luz y peso de los futuros en el PVPC', 'https://www.ocu.org/vivienda-y-energia/gas-luz/informe/precio-luz'],
+    ['Selectra: componentes del precio de la electricidad', 'https://selectra.es/energia/semaforo-selectra/componentes-precio-luz'],
+    ['MITECO: peajes y cargos', 'https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html'],
+  ]}>
+    <p class="lead">El PVPC es la tarifa regulada de la luz. Su precio cambia cada hora porque suma dos cosas que también cambian: <strong>el coste de la energía</strong>, que sale de los mercados, y <strong>los peajes y cargos</strong>, que dependen de si la hora es punta, llano o valle.</p>
+    {mes && <p>En {monthName(mes.ym)} llevamos un precio medio de <strong>{fmtPrice(mes.avg, 3)} €/kWh</strong> sin impuestos, con un mínimo horario de {fmtPrice(mes.minH.price, 3)} y un máximo de {fmtPrice(mes.maxH.price, 3)} €/kWh. Lo puedes ver día a día en el <a href="/precio-luz/">histórico de precios</a>.</p>}
+
+    <section class="prose">
+      <h2>Las piezas del precio</h2>
+      <table>
+        <thead><tr><th>Componente</th><th>Qué es</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Energía</strong></td><td>En 2026, el 45 % se calcula con el mercado diario (la subasta en la que se fija el precio de cada hora del día siguiente) y el 55 % con los mercados a plazo: futuros mensuales, trimestrales y anuales.</td></tr>
+          <tr><td><strong>Peajes y cargos</strong></td><td>Pagan las redes de transporte y distribución y otros costes del sistema (renovables antiguas, déficit...). Los fija la CNMC y el Gobierno, y son mucho más altos en punta que en valle.</td></tr>
+          <tr><td><strong>Servicios de ajuste y otros</strong></td><td>Lo que cuesta mantener la red equilibrada en tiempo real, más pequeñas partidas como el pago por capacidad o el fondo de eficiencia.</td></tr>
+        </tbody>
+      </table>
+      <p>Lo que publica Red Eléctrica como «precio PVPC» de cada hora ya suma todo esto, y es la cifra que mostramos en kWhoy. A tu factura se le añaden después la parte fija (potencia contratada, alquiler del contador, bono social), el impuesto eléctrico y el IVA. Lo explicamos paso a paso en <a href="/guias/como-leer-factura-luz/">cómo leer la factura de la luz</a>.</p>
+
+      <h2>Por qué varía tanto de una hora a otra</h2>
+      <ul>
+        <li><strong>La hora del día:</strong> los peajes cambian según el periodo. Lo tienes en <a href="/guias/horarios-punta-llano-valle/">horarios punta, llano y valle</a>.</li>
+        <li><strong>El sol y el viento:</strong> cuando producen mucho, el mercado diario se abarata. Por eso muchos días las horas centrales son las más baratas.</li>
+        <li><strong>El gas:</strong> cuando las centrales de gas marcan el precio (al atardecer, en días sin viento), el mercado se encarece.</li>
+        <li><strong>La demanda:</strong> olas de frío o de calor suben el consumo y el precio.</li>
+      </ul>
+      <p>En el último mes, el kWh costó de media {fmtPrice(pa.valle, 3)} €/kWh en valle, {fmtPrice(pa.llano, 3)} en llano y {fmtPrice(pa.punta, 3)} en punta, sin impuestos.</p>
+
+      <h2>Quién puede tener el PVPC</h2>
+      <p>Cualquier vivienda o pequeño negocio con hasta 10 kW de potencia contratada, a través de una comercializadora de referencia. Es además la tarifa necesaria para pedir el <a href="/guias/bono-social-electrico/">bono social</a>. Si dudas entre esta y una tarifa fija, mira <a href="/guias/pvpc-o-mercado-libre/">PVPC o mercado libre</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

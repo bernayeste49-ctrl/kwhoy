@@ -1,0 +1,67 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-termo-electrico/';
+const title = 'Cuánto gasta un termo eléctrico al día y al mes (50, 80 y 100 litros)';
+const description = 'Cuántos kWh gasta un termo eléctrico al calentar el agua y al mantenerla caliente, cuánto cuesta al mes según las personas de la casa y cómo programarlo en las horas baratas.';
+const faqs = [
+  ['¿Es mejor tener el termo siempre encendido o encenderlo solo cuando hace falta?', 'Un termo encendido pierde calor todo el día, aunque nadie use agua. Programarlo con un temporizador para que caliente en horas valle (de madrugada) y apagado el resto evita pagar esas pérdidas en las horas caras.'],
+  ['¿A qué temperatura pongo el termo?', 'A 60 °C. Por encima pierdes más calor sin ganar nada; por debajo, el agua tibia puede favorecer la legionela.'],
+  ['¿Cuánto tarda en calentar un termo de 80 litros?', 'Con la resistencia habitual de 1.500 W, unas 2 horas y cuarto partiendo de agua fría.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un termo eléctrico</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Endesa: cuánta energía consume un termo eléctrico', 'https://www.endesa.com/es/blog/blog-de-endesa/consejos-de-ahorro/cuanta-energia-consume-termo-electrico'],
+    ['OCU: guía de compra de termos eléctricos', 'https://www.ocu.org/vivienda-y-energia/calefaccion/guia-de-compra/guia-compra-termos-electricos'],
+    ['Selectra: temperatura del termo y legionela', 'https://selectra.es/energia/noticias/termo-electrico-2026-temperatura-grados-legionela'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">El termo es uno de los aparatos que más pesan en la factura: calentar el agua de una persona cuesta casi 2 kWh al día, y un termo de 80 litros pierde además unos 1,3-1,5 kWh diarios solo por estar caliente. <strong>Programarlo para que caliente de madrugada</strong> es el ahorro más fácil.</p>
+
+    <CosteTabla caption="Coste del agua caliente" unidad="Al día" rows={[
+      { n: 'Agua caliente de 1 persona (unos 35 litros)', kwh: 1.83, mes: 30 },
+      { n: 'Agua caliente de una familia de 3', kwh: 5.5, mes: 30 },
+      { n: 'Pérdidas de un termo de 80 L mantenido a 60-65 °C', kwh: 1.4, mes: 30 },
+      { n: 'Calentar un termo de 80 L entero desde frío', kwh: 4.19 },
+    ]} />
+
+    <section class="prose">
+      <h2>De dónde salen estas cifras</h2>
+      <p>Calentar agua tiene un coste fijo por física: cada litro necesita 0,001163 kWh por cada grado que lo subes. Llevar 80 litros de 15 a 60 °C son 80 × 45 × 0,001163 = 4,19 kWh. En España se usan de media unos 35 litros de agua caliente por persona y día, según la OCU, lo que supone 1,83 kWh por persona.</p>
+      <p>A eso se suman las <strong>pérdidas en espera</strong>: el calor que se escapa del depósito aunque no abras el grifo. Para un termo de 80 litros rondan 1,3-1,5 kWh al día según su aislamiento; la cifra exacta está en la ficha del modelo.</p>
+
+      <h2>Qué tamaño necesitas</h2>
+      <table>
+        <thead><tr><th>Personas en casa</th><th class="num">Litros recomendados</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td class="num">50</td></tr>
+          <tr><td>2</td><td class="num">80</td></tr>
+          <tr><td>3</td><td class="num">100</td></tr>
+          <tr><td>4</td><td class="num">150</td></tr>
+        </tbody>
+      </table>
+      <p>Según la guía de compra de la OCU. Un termo más grande de lo necesario pierde más calor sin darte nada a cambio.</p>
+
+      <h2>Cómo pagar menos por el agua caliente</h2>
+      <ol>
+        <li><strong>Pon un temporizador</strong> (o usa el programador del termo) para que caliente entre las 00:00 y las 08:00, en periodo valle. Con los precios del último mes, el kWh en valle costó de media {Math.round(pa.valle * 1.27 * 100)} céntimos con impuestos, frente a {Math.round(pa.punta * 1.27 * 100)} en punta.</li>
+        <li><strong>Ajusta el termostato a 60 °C.</strong> Bajar de 70 a 60 °C reduce las pérdidas sin que la ducha salga más fría.</li>
+        <li><strong>Duchas cortas y alcachofa de bajo caudal.</strong> Menos litros calientes es menos kWh, sin más.</li>
+        <li><strong>Revisa el ánodo y la cal</strong> cada uno o dos años: la cal en la resistencia alarga el tiempo de calentado.</li>
+      </ol>
+      <p>Para ver en qué horas sale más barato encenderlo hoy, consulta el <a href="/">precio de la luz por horas</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

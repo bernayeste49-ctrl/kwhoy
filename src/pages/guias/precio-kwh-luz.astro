@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages, getDay, madridDate, availableMonths, getMonth, monthName, monthSlug, fmtPrice } from '../../lib/prices.js';
+import { REGULADO } from '../../lib/tarifas.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const hoy = getDay(madridDate()) ?? getDay(pa.hasta);
+const meses = availableMonths().slice(0, 6).map(getMonth).filter(Boolean);
+const k = (v) => fmtPrice(v, 3);
+const path = '/guias/precio-kwh-luz/';
+const title = '¿Cuánto cuesta el kWh de luz hoy? Precio actual y media del mes';
+const description = 'Precio del kilovatio hora (kWh) de luz en España hoy con el PVPC, con y sin impuestos, la media de los últimos 30 días por periodos y cómo compararlo con tu tarifa.';
+const faqs = [
+  ['¿Cuánto cuesta un kWh de luz?', 'Con el PVPC depende de la hora. En los últimos 30 días la media fue de unos ' + (pa.media * tax).toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' €/kWh con impuestos. En el mercado libre lo marca tu contrato: míralo en la línea de energía de tu factura.'],
+  ['¿Qué es un kWh?', 'Es la energía que gasta un aparato de 1.000 W funcionando una hora. Un secador de 2.000 W encendido media hora gasta 1 kWh; una bombilla LED de 10 W tarda 100 horas en gastarlo.'],
+  ['¿Por qué mi factura sale más cara que el precio del kWh por lo que consumo?', 'Porque además de la energía pagas una parte fija por la potencia contratada y el contador, y sobre todo se aplican el impuesto eléctrico y el IVA.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>¿Cuánto cuesta el kWh de luz hoy?</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Red Eléctrica: API de datos del mercado (precio PVPC)', 'https://www.ree.es/es/apidatos'],
+    ['Agencia Tributaria: impuesto especial sobre la electricidad', 'https://sede.agenciatributaria.gob.es/Sede/impuestos-especiales-medioambientales/impuesto-especial-sobre-electricidad.html'],
+  ]}>
+    {hoy && <p class="lead">Hoy, con la tarifa regulada (PVPC), el kWh cuesta de media <strong>{k(hoy.avg)} €</strong> sin impuestos, unos {(hoy.avg * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} € con impuestos. La hora más barata está a {k(hoy.min)} €/kWh y la más cara a {k(hoy.max)} €/kWh. <a href="/">Ver hora a hora</a>.</p>}
+
+    <div class="grid-stats">
+      <div class="stat"><div class="k">Media 30 días, con impuestos</div><div class="v">{(pa.media * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €</div><div class="s">por kWh</div></div>
+      <div class="stat"><div class="k">Valle, con impuestos</div><div class="v">{(pa.valle * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €</div><div class="s">por kWh</div></div>
+      <div class="stat"><div class="k">Punta, con impuestos</div><div class="v">{(pa.punta * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €</div><div class="s">por kWh</div></div>
+    </div>
+
+    <section class="prose">
+      <h2>Precio medio por mes</h2>
+      <table>
+        <thead><tr><th>Mes</th><th class="num">Media sin impuestos</th><th class="num">Media con impuestos</th></tr></thead>
+        <tbody>
+          {meses.map((m) => (<tr><td><a href={`/precio-luz/${monthSlug(m.ym)}/`}>{monthName(m.ym)}</a></td><td class="num">{k(m.avg)} €/kWh</td><td class="num">{(m.avg * tax).toLocaleString('es-ES', { maximumFractionDigits: 3 })} €/kWh</td></tr>))}
+        </tbody>
+      </table>
+      <p class="muted">Precio PVPC de Red Eléctrica, que ya incluye energía, peajes y cargos. «Con impuestos» añade el impuesto eléctrico ({(REGULADO.impuestoElectrico * 100).toLocaleString('es-ES', { maximumFractionDigits: 2 })} %) y el IVA ({REGULADO.iva * 100} %).</p>
+
+      <h2>Cómo comparar con tu tarifa</h2>
+      <ol>
+        <li>Busca en tu factura la línea de <strong>energía consumida</strong> y el precio por kWh. Suele aparecer sin impuestos.</li>
+        <li>Compáralo con la media sin impuestos de esta página. Si tienes tarifa con tres periodos, compara cada uno con su media de valle y punta.</li>
+        <li>No olvides la parte fija: dos ofertas con el mismo precio por kWh pueden diferir en el precio de la potencia.</li>
+      </ol>
+      <p>Si quieres el cálculo completo, el <a href="/simulador-factura-luz/">simulador de factura</a> estima tu recibo con los precios actuales, y la guía <a href="/guias/pvpc-o-mercado-libre/">PVPC o mercado libre</a> explica cuándo conviene cada tarifa.</p>
+
+      <h2>Cuánto es un kWh en la práctica</h2>
+      <ul>
+        <li>Una lavadora a 40 °C: alrededor de 0,9 kWh.</li>
+        <li>Una hora de aire acondicionado de 3.000 frigorías: alrededor de 1 kWh (<a href="/guias/cuanto-gasta-aire-acondicionado/">detalle</a>).</li>
+        <li>Una hora de horno: alrededor de 1 kWh (<a href="/guias/cuanto-gasta-horno-electrico/">detalle</a>).</li>
+        <li>El agua caliente de una persona en un día, con termo eléctrico: casi 2 kWh (<a href="/guias/cuanto-gasta-termo-electrico/">detalle</a>).</li>
+      </ul>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

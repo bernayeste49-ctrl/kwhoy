@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-calefaccion-electrica/';
+const title = 'Cuánto gasta la calefacción eléctrica: radiador, calefactor, emisor o bomba de calor';
+const description = 'Cuánto cuesta por hora y al mes un radiador de aceite, un calefactor, un emisor térmico o una bomba de calor con el precio actual de la luz, y cuál sale más barato.';
+const faqs = [
+  ['¿Qué calefacción eléctrica gasta menos?', 'La bomba de calor (un aire acondicionado con modo calor o una aerotermia), porque por cada kWh de luz da de 3 a 4 kWh de calor. Radiadores, calefactores y emisores dan 1 kWh de calor por cada kWh que gastan, sea cual sea su tipo.'],
+  ['¿Un emisor térmico gasta menos que un radiador de aceite?', 'A igual potencia y con el mismo termostato, dan el mismo calor por kWh. Cambia cómo reparten el calor y lo rápido que responden, no la eficiencia. Desconfía de los anuncios de radiadores «de bajo consumo».'],
+  ['¿Merece la pena un acumulador?', 'Solo si cargas el calor en las horas valle (de 00:00 a 08:00 y los fines de semana), que es cuando la luz suele estar más barata. Si lo cargas en punta, pierde toda su ventaja.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta la calefacción eléctrica</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['IDAE: Guía práctica de la energía', 'https://www.idae.es/sites/default/files/documentos/Guia-de-la-energia-idae/Guia_Energia_2007.pdf'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+    ['MITECO: periodos horarios del peaje 2.0TD', 'https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html'],
+  ]}>
+    <p class="lead">Todos los radiadores y calefactores eléctricos convierten 1 kWh de luz en 1 kWh de calor: <strong>lo que gastan depende de su potencia y de las horas que estén encendidos</strong>, no de la tecnología. La única forma eléctrica de calentar mucho más barato es la bomba de calor.</p>
+
+    <CosteTabla caption="Coste de una hora de calefacción" unidad="Por hora" rows={[
+      { n: 'Calefactor o estufa de 2.000 W a tope', kwh: 2.0, mes: 120 },
+      { n: 'Radiador de aceite de 1.500 W con termostato (≈60 % del tiempo)', kwh: 0.9, mes: 180 },
+      { n: 'Emisor térmico de 1.000 W con termostato (≈50 % del tiempo)', kwh: 0.5, mes: 180 },
+      { n: 'Bomba de calor dando 2 kW de calor (COP 3,5)', kwh: 0.57, mes: 180 },
+    ]} />
+    <p class="muted">Al mes: calefactor 4 horas al día; el resto, 6 horas al día durante 30 días. El porcentaje del tiempo encendido depende del aislamiento de la casa y del frío que haga.</p>
+
+    <section class="prose">
+      <h2>Por qué la bomba de calor gasta tanto menos</h2>
+      <p>Un radiador calienta una resistencia: toda la electricidad se convierte en calor, ni más ni menos. Una bomba de calor no fabrica el calor, lo mueve desde el aire de la calle al interior, y por eso da de 3 a 4 veces más calor del que consume. Para el mismo calor que un calefactor de 2.000 W, un split con modo calor gasta unos 0,5-0,7 kWh. Si ya tienes aire acondicionado con bomba de calor, úsalo antes que cualquier radiador. Tienes más detalle en <a href="/guias/cuanto-gasta-aire-acondicionado/">cuánto gasta el aire acondicionado</a>.</p>
+
+      <h2>Cómo elegir según el uso</h2>
+      <ul>
+        <li><strong>Calefactor de aire:</strong> calienta rápido una habitación pequeña durante poco rato (un baño por la mañana). Para muchas horas, sale caro.</li>
+        <li><strong>Radiador de aceite o emisor térmico:</strong> mejor para mantener una habitación caliente varias horas, siempre con termostato.</li>
+        <li><strong>Acumulador:</strong> solo tiene sentido cargándolo en horas valle.</li>
+        <li><strong>Bomba de calor:</strong> la opción más barata para calentar la casa entera a diario.</li>
+      </ul>
+
+      <h2>Trucos para pagar menos</h2>
+      <ol>
+        <li><strong>Usa el termostato.</strong> 19-21 °C es suficiente de día; por la noche, menos. Cada grado de más alarga el tiempo que el aparato está encendido.</li>
+        <li><strong>Mueve el calor a las horas baratas.</strong> Entre semana, la franja punta (de 18:00 a 22:00) coincide con las horas en que más se usa la calefacción. Calentar la casa antes y mantener después reduce la factura. El <a href="/">precio de la luz de hoy</a> te dice qué horas salen mejor.</li>
+        <li><strong>No enchufes varios a la vez sin mirar la potencia.</strong> Dos calefactores de 2.000 W ya suman 4 kW: con 3,45 o 4,6 kW contratados, saltará el limitador si coinciden con el horno. Comprueba tu caso con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a>.</li>
+        <li><strong>Cierra puertas y aísla corrientes.</strong> Calentar solo la estancia en uso es la forma más directa de gastar menos.</li>
+      </ol>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages, FESTIVOS, longDate, madridDate } from '../../lib/prices.js';
+import { REGULADO } from '../../lib/tarifas.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const k = (v) => (v * tax).toLocaleString('es-ES', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const hoy = madridDate();
+const year = hoy.slice(0, 4);
+const festivos = [...FESTIVOS].filter((d) => d.startsWith(year) || d.startsWith(String(+year + 1))).filter((d) => d >= hoy).slice(0, 8);
+const path = '/guias/horarios-punta-llano-valle/';
+const title = 'Horarios de la luz: periodos punta, llano y valle (tarifa 2.0TD)';
+const description = 'A qué hora empieza y acaba cada periodo de la luz (punta, llano y valle), qué pasa los fines de semana y festivos, y cuánto cuesta el kWh en cada uno ahora mismo.';
+const faqs = [
+  ['¿A qué hora es más barata la luz?', 'Por tramos, en el periodo valle: de 00:00 a 08:00 de lunes a viernes y todo el día los sábados, domingos y festivos nacionales. Con el PVPC, además, hay días en que las horas del mediodía son las más baratas por la producción solar, así que conviene mirar el precio de cada día.'],
+  ['¿Cambian los horarios en verano?', 'No. Desde junio de 2021 los periodos de la tarifa 2.0TD son los mismos todo el año en la península.'],
+  ['¿Los festivos autonómicos son valle?', 'No. Solo los festivos nacionales que no se pueden sustituir cuentan como valle todo el día. Los festivos autonómicos y locales siguen el horario de un laborable.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Horarios de la luz: punta, llano y valle</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['MITECO: peajes y cargos, periodos horarios 2.0TD', 'https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html'],
+    ['CNMC: Circular 3/2020 de peajes de transporte y distribución', 'https://www.boe.es/buscar/act.php?id=BOE-A-2020-1066'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">En casi todas las casas (potencia de hasta 15 kW, tarifa de acceso 2.0TD), el día se divide en tres periodos con precios distintos. Los horarios son los mismos todo el año en la península.</p>
+
+    <div class="tabla-periodos">
+      <table>
+        <thead><tr><th>Periodo</th><th>Lunes a viernes</th><th>Sábados, domingos y festivos nacionales</th><th class="num">Precio medio PVPC, últimos 30 días</th></tr></thead>
+        <tbody>
+          <tr><td><span class="pill cara">Punta</span></td><td>10:00 a 14:00 y 18:00 a 22:00</td><td>—</td><td class="num">{k(pa.punta)} €/kWh</td></tr>
+          <tr><td><span class="pill media">Llano</span></td><td>08:00 a 10:00, 14:00 a 18:00 y 22:00 a 00:00</td><td>—</td><td class="num">{k(pa.llano)} €/kWh</td></tr>
+          <tr><td><span class="pill barata">Valle</span></td><td>00:00 a 08:00</td><td>Todo el día</td><td class="num">{k(pa.valle)} €/kWh</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Precios con impuesto eléctrico e IVA, calculados con los datos de Red Eléctrica del último mes. Se actualizan cada día. En Ceuta y Melilla los horarios se desplazan una hora.</p>
+
+    <section class="prose">
+      <h2>Qué significa para tu factura</h2>
+      <p>Cada periodo tiene unos peajes y cargos distintos, que son la parte regulada del precio. Son mucho más altos en punta que en valle, y por eso el mismo kWh cuesta más a las 20:00 de un martes que a las 03:00. Esto afecta a dos tipos de tarifa:</p>
+      <ul>
+        <li><strong>PVPC (tarifa regulada):</strong> el precio cambia cada hora. A los peajes se suma el precio del mercado, que también varía. Lo ves cada día en el <a href="/">precio de la luz de hoy</a>.</li>
+        <li><strong>Tarifas de mercado libre con tres periodos:</strong> el precio es fijo dentro de cada periodo, pero distinto en punta, llano y valle.</li>
+      </ul>
+      <p>Con una tarifa de precio único 24 horas, el periodo no cambia lo que pagas por kWh: la comercializadora reparte la diferencia en un precio medio.</p>
+
+      <h2>La potencia también tiene dos periodos</h2>
+      <p>El término de potencia distingue entre punta (P1, de 08:00 a 00:00 los laborables) y valle (P2, el resto). Puedes contratar una potencia distinta en cada uno, por ejemplo más de noche si cargas el coche eléctrico. Te lo explicamos en <a href="/guias/bajar-potencia-contratada/">cómo cambiar la potencia contratada</a>.</p>
+
+      <h2>Próximos festivos nacionales con todo el día en valle</h2>
+      <ul>{festivos.map((d) => <li>{longDate(d)}</li>)}</ul>
+      <p class="muted">Cuando un festivo nacional cae en domingo, el día ya es valle de por sí.</p>
+
+      <h2>Cómo aprovecharlo</h2>
+      <ol>
+        <li>Programa lavadora, lavavajillas y secadora para la noche o el fin de semana. Mira <a href="/guias/mejores-horas-poner-lavadora/">las mejores horas para la lavadora</a>.</li>
+        <li>Si tienes termo eléctrico, ponle un temporizador para que caliente de madrugada. Lo detallamos en <a href="/guias/cuanto-gasta-termo-electrico/">cuánto gasta un termo</a>.</li>
+        <li>Carga el coche eléctrico en valle: la <a href="/coste-cargar-coche-electrico/">calculadora de carga</a> te dice cuánto ahorras.</li>
+      </ol>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>
+<style>
+  .tabla-periodos { overflow-x: auto; margin: 16px 0 8px; }
+  .tabla-periodos table { min-width: 620px; }
+</style>
