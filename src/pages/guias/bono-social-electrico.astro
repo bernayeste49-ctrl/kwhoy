@@ -1,0 +1,58 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+---
+<Base title="Bono social eléctrico 2026: descuentos, requisitos y cómo pedirlo | kWhoy" description="Cuánto descuenta el bono social de la luz en 2026 (42,5 % y 57,5 %), qué cambia el 31 de diciembre, quién puede pedirlo y los pasos para solicitarlo.">
+  <h1>Bono social eléctrico 2026: descuentos y cómo pedirlo</h1>
+  <GuideMeta updated="2026-11-17" sources={[
+    ['MITECO: requisitos y descuentos del bono social', 'https://www.miteco.gob.es/en/energia/pobreza-energetica/pe-001/requisitos.html'],
+    ['Consumo Responde: bono social eléctrico y Real Decreto-ley 7/2026', 'https://www.consumoresponde.es/node/253823'],
+    ['Comunidad de Madrid: información práctica del bono social', 'https://www.comunidad.madrid/servicios/consumo/informacion-practica-bono-social'],
+    ['Selectra: bono social térmico y 31 de diciembre', 'https://selectra.es/energia/noticias/bono-social-2026-31-diciembre-termico'],
+  ]}>
+    <p class="lead">Hasta el 31 de diciembre de 2026, el bono social descuenta un <strong>42,5 %</strong> de la factura a los consumidores vulnerables y un <strong>57,5 %</strong> a los vulnerables severos. Después, si no hay prórroga, el descuento vuelve al 35 % y al 50 %.</p>
+    <section class="prose">
+      <h2>Descuentos</h2>
+      <table>
+        <thead><tr><th>Categoría</th><th class="num">Hasta el 31/12/2026</th><th class="num">Descuento habitual</th></tr></thead>
+        <tbody>
+          <tr><td>Consumidor vulnerable</td><td class="num">42,5 %</td><td class="num">35 %</td></tr>
+          <tr><td>Vulnerable severo</td><td class="num">57,5 %</td><td class="num">50 %</td></tr>
+        </tbody>
+      </table>
+      <p>Los descuentos reforzados de 2026 los fijó el Real Decreto-ley 7/2026. El descuento se aplica hasta un límite de energía al año que depende de cuántas personas forman el hogar; lo que consumas por encima se paga a precio de PVPC.</p>
+
+      <h2>Requisitos</h2>
+      <p>Primero, una condición para todos: tener contratada la <strong>tarifa regulada (PVPC)</strong> en tu <strong>vivienda habitual</strong>, como persona física, con hasta 10 kW de potencia y a través de una comercializadora de referencia.</p>
+      <h3>Consumidor vulnerable (basta con cumplir una)</h3>
+      <ul>
+        <li>Renta anual del hogar igual o inferior a 1,5 veces el IPREM de 14 pagas. El multiplicador sube 0,3 por cada adulto adicional y 0,5 por cada menor.</li>
+        <li>Tener el título de familia numerosa.</li>
+        <li>Que tú, o todos los miembros con ingresos, cobréis la pensión mínima de jubilación o incapacidad permanente, sin otros ingresos de más de 500 € al año.</li>
+        <li>Que tú o alguien del hogar cobre el Ingreso Mínimo Vital.</li>
+      </ul>
+      <p>Algunas circunstancias especiales suben el umbral de renta en 1 IPREM (8.400 €): discapacidad igual o superior al 33 %, violencia de género, víctima de terrorismo, dependencia de grado II o III, o familia monoparental con al menos un menor.</p>
+      <h3>Vulnerable severo (basta con cumplir una)</h3>
+      <ul>
+        <li>Renta igual o inferior a la mitad de los umbrales anteriores.</li>
+        <li>Familia numerosa con renta del hogar igual o inferior a 2 veces el IPREM (16.800 €).</li>
+        <li>Pensión mínima sin otros ingresos de más de 500 € al año y renta del hogar igual o inferior a 1 IPREM (8.400 €).</li>
+      </ul>
+      <p>Si además los servicios sociales pagan al menos la mitad de tu factura, se te considera en riesgo de exclusión social y no te pueden cortar la luz por impago temporal.</p>
+
+      <h2>Cómo pedirlo, paso a paso</h2>
+      <ol>
+        <li><strong>Comprueba que tienes el PVPC.</strong> Si no, pide el cambio a una comercializadora de referencia.</li>
+        <li><strong>Rellena la solicitud</strong> de tu comercializadora de referencia (la descargas de su web o del Ministerio) y prepara la documentación que te pida sobre los miembros del hogar.</li>
+        <li><strong>Envíala</strong> por los canales de la comercializadora: web, correo electrónico o postal, o en una oficina.</li>
+        <li><strong>Renueva a tiempo.</strong> El bono se concede por un periodo limitado; la compañía te avisará antes de que caduque.</li>
+      </ol>
+
+      <h2>Bono social térmico</h2>
+      <p>Si eres beneficiario del bono social eléctrico a 31 de diciembre, recibes el bono social térmico del año siguiente sin pedirlo: es una ayuda anual para calefacción, agua caliente o cocina que gestionan las comunidades autónomas.</p>
+      <p class="muted">Esta guía es informativa. Para tu caso concreto, consulta con tu comercializadora de referencia o en la web del Ministerio.</p>
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

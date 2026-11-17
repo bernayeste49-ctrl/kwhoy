@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { REGULADO } from '../../lib/tarifas.js';
+const kwAno = (REGULADO.potenciaPuntaEurKwDia + REGULADO.potenciaValleEurKwDia) * 365 * (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const e0 = (v) => v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+---
+<Base title="Cómo bajar la potencia contratada de la luz: coste y ahorro (2026) | kWhoy" description="Cuánto ahorras bajando la potencia contratada, cuánto cuesta el cambio, cada cuánto puedes hacerlo y cómo saber qué potencia necesitas de verdad.">
+  <h1>Cómo bajar la potencia contratada y cuánto ahorras</h1>
+  <GuideMeta updated="2026-11-17" sources={[
+    ['Rankia: derechos de extensión, acceso y enganche 2026', 'https://www.rankia.com/blog/luz-y-gas/7481645-cuanto-cuesta-subir-potencia-luz'],
+    ['TarifaLuzHora: coste de bajar la potencia y potencias en múltiplos de 0,1 kW', 'https://tarifaluzhora.es/tramites/aumentar-potencia-electrica'],
+    ['Kompara: plazo mínimo entre cambios (Real Decreto 88/2026)', 'https://kompara.es/luz/tramites/cambiar-potencia-contratada'],
+  ]}>
+    <p class="lead">Con la tarifa regulada, cada kW contratado cuesta unos <strong>{e0(kwAno)} al año</strong> con impuestos, aunque no lo uses. Bajar de 5,75 a 4,6 kW ahorra unos {e0(kwAno * 1.15)} al año, y el cambio cuesta unos 11 € con IVA.</p>
+    <section class="prose">
+      <h2>1. Averigua qué potencia necesitas</h2>
+      <p>La potencia es lo que consumen a la vez todos los aparatos encendidos. Piensa en tu peor momento del día (horno, vitro y lavadora a la vez, por ejemplo) y súmalo. La <a href="/calculadora-potencia-contratada/">calculadora de potencia contratada</a> lo hace por ti.</p>
+      <p>También puedes ver tu potencia máxima real en el área de clientes de tu distribuidora (la empresa dueña del contador): la mayoría muestra la curva de consumo y el máximo registrado cada mes.</p>
+      <p>Con contador inteligente no tienes que elegir entre unos pocos valores: puedes contratar la potencia en múltiplos de 0,1 kW.</p>
+
+      <h2>2. Cuánto cuesta el cambio</h2>
+      <table>
+        <thead><tr><th>Concepto</th><th class="num">Bajar potencia</th><th class="num">Subir potencia</th></tr></thead>
+        <tbody>
+          <tr><td>Derechos de enganche</td><td class="num">9,04 €</td><td class="num">9,04 €</td></tr>
+          <tr><td>Derechos de acceso</td><td class="num">—</td><td class="num">19,70 €/kW</td></tr>
+          <tr><td>Derechos de extensión</td><td class="num">—</td><td class="num">17,37 €/kW</td></tr>
+        </tbody>
+      </table>
+      <p class="muted">Importes sin IVA. Los derechos de extensión solo se pagan por los kW que superen los que ya tenía adscritos tu vivienda.</p>
+      <p>Bajar es barato; volver a subir, no. Por eso conviene no pasarse recortando.</p>
+
+      <h2>3. Cada cuánto puedes cambiarla</h2>
+      <p>Como norma general, tiene que haber pasado al menos un año desde el último cambio de potencia (artículo 38 del reglamento aprobado por el Real Decreto 88/2026). Si te quedas corto, tendrás que esperar o pagar la subida.</p>
+
+      <h2>4. Cómo pedirlo</h2>
+      <ol>
+        <li>Ten a mano tu DNI y el CUPS (está en la factura).</li>
+        <li>Pídelo a tu comercializadora, por teléfono o en su área de clientes. Ella lo tramita con la distribuidora.</li>
+        <li>El cambio suele aplicarse en pocos días y el coste aparece en la siguiente factura.</li>
+      </ol>
+
+      <h2>Truco: potencias distintas en punta y valle</h2>
+      <p>Con el peaje 2.0TD puedes contratar más potencia en valle (de 00:00 a 08:00 y fines de semana) que en punta. En el PVPC la potencia en valle es muy barata, así que si cargas el coche de noche puedes subirla solo en ese periodo.</p>
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

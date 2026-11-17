@@ -112,3 +112,15 @@ export function avgLastDays(n = 30) {
   const avg = ds.reduce((s, d) => s + d.avg, 0) / ds.length;
   return { avg, dias: ds.length, desde: ds[ds.length - 1].iso, hasta: ds[0].iso };
 }
+
+/** Precio medio por hora del día (0-23) en los últimos n días, separando laborables y fines de semana/festivos */
+export function hourlyProfile(n = 30) {
+  const ds = availableDates().slice(0, n).map((iso) => getDay(iso));
+  const acc = { lab: Array.from({ length: 24 }, () => []), fin: Array.from({ length: 24 }, () => []) };
+  for (const d of ds) for (const h of d.hours) acc[d.findeOFestivo ? 'fin' : 'lab'][h.hour].push(h.price);
+  const mean = (a) => (a.length ? a.reduce((s, x) => s + x, 0) / a.length : null);
+  return {
+    dias: ds.length, desde: ds[ds.length - 1].iso, hasta: ds[0].iso,
+    lab: acc.lab.map(mean), fin: acc.fin.map(mean),
+  };
+}

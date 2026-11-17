@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { avgLastDays, fmtPrice, shortDate } from '../../lib/prices.js';
+const media = avgLastDays(30);
+---
+<Base title="PVPC o mercado libre: cuál conviene en 2026 y cómo decidir | kWhoy" description="Diferencias entre la tarifa regulada PVPC y el mercado libre, ventajas e inconvenientes de cada una y cómo calcular cuál te sale más barata con tu consumo.">
+  <h1>PVPC o mercado libre: cuál te conviene</h1>
+  <GuideMeta updated="2026-11-17" sources={[
+    ['Roams: el PVPC frente a las ofertas del comparador de la CNMC (2026)', 'https://roams.es/actualidad/energia/la-sorpresa-de-la-luz-en-2026-el-pvpc-ya-es-mas-barato-que-la-mayoria-de-las-tarifas-del-mercado-libre/'],
+    ['Papernest: peso del mercado a plazos en el PVPC', 'https://www.papernest.es/estudios/73-tarifas-del-mercado-libre-son-mas-baratas-que-pvpc/'],
+    ['Comparador de ofertas de la CNMC', 'https://comparador.cnmc.gob.es/'],
+    ['Comunidad de Madrid: el bono social solo se aplica en el PVPC', 'https://www.comunidad.madrid/servicios/consumo/informacion-practica-bono-social'],
+  ]}>
+    <p class="lead">No hay una respuesta única: depende del precio de la oferta libre que tengas delante y de cuándo consumes. La forma fiable de decidir es poner los números de tu caso en el <a href="/simulador-factura-luz/">simulador de factura</a>. Aquí tienes lo que necesitas saber para leer el resultado.</p>
+    <section class="prose">
+      <h2>Las diferencias en una tabla</h2>
+      <table>
+        <thead><tr><th></th><th>PVPC (regulada)</th><th>Mercado libre</th></tr></thead>
+        <tbody>
+          <tr><td>Precio de la energía</td><td>Cambia cada hora</td><td>Fijo, por tramos o indexado, según la oferta</td></tr>
+          <tr><td>Quién fija el precio</td><td>Fórmula del Gobierno, igual para todos</td><td>Cada comercializadora</td></tr>
+          <tr><td>Potencia máxima</td><td>Hasta 10 kW</td><td>Sin límite</td></tr>
+          <tr><td>Bono social</td><td>Sí</td><td>No</td></tr>
+          <tr><td>Permanencia y servicios extra</td><td>No</td><td>Depende de la oferta</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Cuándo suele ganar el PVPC</h2>
+      <ul>
+        <li>Si puedes mover consumos a las horas baratas (madrugada y, en días de sol, el mediodía).</li>
+        <li>Si tienes derecho al bono social, que solo se aplica en la tarifa regulada.</li>
+        <li>Si no quieres revisar ofertas cada año: el precio es el que marca el mercado, sin subidas al renovar.</li>
+      </ul>
+      <p>Según un análisis del comparador de la CNMC publicado este año, solo una minoría de ofertas del mercado libre lograba bajar del PVPC para distintos perfiles de consumo. Además, desde 2026 más de la mitad del precio regulado se calcula con el mercado a plazos (un 55 %, frente al 40 % de 2025), lo que suaviza los picos.</p>
+
+      <h2>Cuándo suele ganar el mercado libre</h2>
+      <ul>
+        <li>Si encuentras una oferta con precio de energía claramente por debajo de la media del PVPC (en los últimos {media.dias} días fue {fmtPrice(media.avg)} €/kWh sin impuestos, del {shortDate(media.desde)} al {shortDate(media.hasta)}).</li>
+        <li>Si consumes mucho en horas punta y no puedes cambiar tus horarios.</li>
+        <li>Si prefieres pagar siempre lo mismo y evitar sorpresas en meses caros.</li>
+      </ul>
+
+      <h2>Tres cosas que mirar en una oferta libre</h2>
+      <ol>
+        <li><strong>El precio de la potencia, no solo el de la energía.</strong> Hay ofertas con kWh baratos y potencia muy cara.</li>
+        <li><strong>Cuánto dura el precio.</strong> Muchos descuentos son solo el primer año.</li>
+        <li><strong>Servicios añadidos.</strong> Mantenimientos o seguros que se cobran aparte y encarecen la factura.</li>
+      </ol>
+      <p>Para comparar ofertas de forma neutral, usa el comparador oficial de la CNMC y lleva sus precios al <a href="/simulador-factura-luz/">simulador</a>.</p>
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

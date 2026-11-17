@@ -21,7 +21,7 @@ const aparatos = [
 ];
 const cfg = { ...REGULADO, potencias: POTENCIAS_NORMALIZADAS };
 const faqs = [
-  ['¿Qué potencia necesito en casa?', 'Suma la potencia de los aparatos que sueles usar a la vez y elige la potencia normalizada inmediatamente superior. En un piso sin calefacción eléctrica suele bastar con 3,45 o 4,6 kW; con aire acondicionado, horno y vitro a la vez, 5,75 kW o más.'],
+  ['¿Qué potencia necesito en casa?', 'Suma la potencia de los aparatos que sueles usar a la vez y añade un pequeño margen. Con contador inteligente puedes contratar la potencia en múltiplos de 0,1 kW. En un piso sin calefacción eléctrica suele bastar con 3,45 o 4,6 kW; con aire acondicionado, horno y vitro a la vez, 5,75 kW o más.'],
   ['¿Qué pasa si me quedo corto?', 'Si superas la potencia contratada, salta el interruptor de control de potencia (ICP) y te quedas sin luz hasta que bajes el consumo y lo vuelvas a subir. Puedes evitarlo sin subir la potencia si no enciendes a la vez los aparatos más potentes.'],
   ['¿Cuánto cuesta cambiar la potencia?', 'Bajar potencia suele ser gratis o muy barato. Subirla tiene unos derechos de acceso y extensión que cobra la distribuidora. Además, la normativa limita los cambios: consulta las condiciones con tu comercializadora antes de pedirlo.'],
   ['¿Puedo contratar potencias distintas en punta y valle?', 'Sí. Con el peaje 2.0TD puedes tener más potencia en valle (de 00:00 a 08:00 y fines de semana), útil si cargas el coche de noche, y menos en punta, que es la cara.'],
@@ -60,7 +60,7 @@ const jsonLd = [
 
   <section class="prose">
     <h2>Potencias normalizadas</h2>
-    <p>En viviendas con instalación monofásica solo se pueden contratar estos valores: {POTENCIAS_NORMALIZADAS.map((p) => p.toLocaleString('es-ES')).join(', ')} kW. La calculadora te propone el primero que cubre tu consumo simultáneo.</p>
+    <p>Las potencias más habituales en viviendas son {POTENCIAS_NORMALIZADAS.map((p) => p.toLocaleString('es-ES')).join(', ')} kW, pero con contador inteligente puedes contratar cualquier valor en múltiplos de 0,1 kW. La calculadora te propone el valor justo que cubre tu consumo simultáneo y, como referencia, la potencia habitual más cercana por encima.</p>
     <h2>Cuánto cuesta cada kW</h2>
     <p>Con la tarifa regulada, cada kW contratado cuesta unos {((REGULADO.potenciaPuntaEurKwDia + REGULADO.potenciaValleEurKwDia) * 365 * (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva)).toLocaleString('es-ES', { maximumFractionDigits: 0 })} € al año con impuestos, uses la luz o no. Por eso tener más potencia de la necesaria es uno de los gastos más fáciles de recortar.</p>
     <h2>Preguntas frecuentes</h2>
@@ -77,9 +77,10 @@ const jsonLd = [
     function calc() {
       var w = 0; document.querySelectorAll('#f input[type=checkbox]').forEach(function (c) { if (c.checked) w += Number(c.dataset.w); });
       var need = w * 1.1 / 1000;
-      var rec = cfg.potencias.find(function (p) { return p >= need; }) || cfg.potencias[cfg.potencias.length - 1];
+      var rec = Math.max(1, Math.ceil(need * 10) / 10);
+      var norm = cfg.potencias.find(function (p) { return p >= need; }) || cfg.potencias[cfg.potencias.length - 1];
       $('r-kw').textContent = kwFmt(rec);
-      $('r-sum').textContent = 'Simultáneo: ' + (w / 1000).toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' kW (+10 % de margen)';
+      $('r-sum').textContent = 'Simultáneo: ' + (w / 1000).toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' kW + 10 % de margen · potencia habitual más cercana: ' + kwFmt(norm);
       $('r-cost').textContent = eur(anual(rec));
       var act = Number($('actual').value), d = anual(act) - anual(rec);
       if (Math.abs(d) < 1) { $('r-diff').textContent = 'Ya tienes la adecuada'; $('r-diff-s').textContent = ''; }

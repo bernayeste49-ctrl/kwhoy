@@ -1,0 +1,23 @@
+---
+import Base from '../../layouts/Base.astro';
+const guias = [
+  ['/guias/mejores-horas-poner-lavadora/', 'Las mejores horas para poner la lavadora', 'Con los precios reales del último mes, hora a hora, laborables y fines de semana.'],
+  ['/guias/como-leer-factura-luz/', 'Cómo leer la factura de la luz', 'Cada concepto explicado, con un ejemplo calculado con los precios actuales.'],
+  ['/guias/pvpc-o-mercado-libre/', 'PVPC o mercado libre', 'Diferencias, cuándo conviene cada uno y qué mirar en una oferta.'],
+  ['/guias/bajar-potencia-contratada/', 'Cómo bajar la potencia contratada', 'Cuánto ahorras, cuánto cuesta el cambio y cada cuánto puedes hacerlo.'],
+  ['/guias/bono-social-electrico/', 'Bono social eléctrico 2026', 'Descuentos vigentes, requisitos y pasos para pedirlo.'],
+];
+---
+<Base title="Guías para ahorrar en la factura de la luz | kWhoy" description="Guías prácticas y actualizadas sobre la factura de la luz: mejores horas para consumir, PVPC o mercado libre, potencia contratada y bono social.">
+  <h1>Guías para ahorrar en la luz</h1>
+  <p class="lead">Explicaciones claras, con datos actuales y fuentes oficiales.</p>
+  <div class="tools">
+    {guias.map(([href, t, d]) => (<a class="card tool" href={href}><strong>{t}</strong><span>{d}</span></a>))}
+  </div>
+</Base>
+<style>
+  .tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 16px 0; }
+  .tool { display: grid; gap: 6px; text-decoration: none; color: var(--text); }
+  .tool:hover { border-color: var(--navy); }
+  .tool span { color: var(--muted); font-size: 0.95rem; }
+</style>

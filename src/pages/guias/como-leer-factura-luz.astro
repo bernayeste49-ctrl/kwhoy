@@ -1,0 +1,68 @@
+---
+import Base from '../../layouts/Base.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { REGULADO, factura } from '../../lib/tarifas.js';
+import { avgLastDays, fmtPrice } from '../../lib/prices.js';
+
+const media = avgLastDays(30);
+const ej = factura({ kw: 4.6, kwh: 270, precioEnergia: media.avg, potenciaPunta: REGULADO.potenciaPuntaEurKwDia, potenciaValle: REGULADO.potenciaValleEurKwDia });
+const e = (v) => v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+const pct = (v) => Math.round((v / ej.total) * 100) + ' %';
+const n4 = (v) => v.toLocaleString('es-ES', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+---
+<Base title="Cómo leer la factura de la luz: cada concepto explicado (2026) | kWhoy" description="Qué es cada línea de tu factura de la luz: potencia, energía, bono social, impuesto eléctrico, contador e IVA. Con un ejemplo real calculado con los precios de 2026.">
+  <h1>Cómo leer la factura de la luz, concepto por concepto</h1>
+  <GuideMeta updated={REGULADO.actualizado} sources={[
+    ['MITECO: peajes de acceso y cargos 2026', 'https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html'],
+    ['Red Eléctrica: precio del PVPC', 'https://www.ree.es/es/apidatos'],
+    ['TarifaLuzHora: reparto de la factura en 2026 (alquiler de contador e impuestos)', 'https://tarifaluzhora.es/noticias/factura-luz-2026-cada-euro-reparto-energia'],
+  ]}>
+    <p class="lead">Una factura de luz tiene seis conceptos. Solo uno depende de cuánto consumes; el resto se paga igual aunque no enciendas nada. Este es el desglose de una vivienda típica con 4,6 kW y 270 kWh al mes, con los precios del PVPC del último mes: <strong>{e(ej.total)} al mes</strong>.</p>
+
+    <table>
+      <thead><tr><th>Concepto</th><th class="num">Importe</th><th class="num">Peso</th></tr></thead>
+      <tbody>
+        <tr><td>Término de potencia</td><td class="num">{e(ej.potencia)}</td><td class="num">{pct(ej.potencia)}</td></tr>
+        <tr><td>Término de energía</td><td class="num">{e(ej.energia)}</td><td class="num">{pct(ej.energia)}</td></tr>
+        <tr><td>Financiación del bono social</td><td class="num">{e(ej.bono)}</td><td class="num">{pct(ej.bono)}</td></tr>
+        <tr><td>Impuesto eléctrico</td><td class="num">{e(ej.iee)}</td><td class="num">{pct(ej.iee)}</td></tr>
+        <tr><td>Alquiler del contador</td><td class="num">{e(ej.contador)}</td><td class="num">{pct(ej.contador)}</td></tr>
+        <tr><td>IVA</td><td class="num">{e(ej.iva)}</td><td class="num">{pct(ej.iva)}</td></tr>
+        <tr style="font-weight:700"><td>Total</td><td class="num">{e(ej.total)}</td><td class="num">100 %</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Ejemplo calculado con el precio medio del PVPC de los últimos {media.dias} días ({fmtPrice(media.avg)} €/kWh) y los valores regulados vigentes. Haz el tuyo con el <a href="/simulador-factura-luz/">simulador de factura</a>.</p>
+
+    <section class="prose">
+      <h2>1. Término de potencia (fijo)</h2>
+      <p>Es lo que pagas por tener contratados unos kilovatios disponibles, consumas o no. Se calcula como kW contratados × días × precio. En el PVPC hay dos precios: {n4(REGULADO.potenciaPuntaEurKwDia)} €/kW al día en punta y {n4(REGULADO.potenciaValleEurKwDia)} €/kW al día en valle. Incluyen los peajes, los cargos del sistema y el margen de comercialización ({REGULADO.margenComercializacionEurKwAno.toLocaleString('es-ES')} €/kW al año).</p>
+      <p><strong>Cómo bajarlo:</strong> contratar solo la potencia que necesitas. Lo explicamos en la guía para <a href="/guias/bajar-potencia-contratada/">bajar la potencia contratada</a>.</p>
+
+      <h2>2. Término de energía (variable)</h2>
+      <p>Los kWh que has consumido multiplicados por su precio. Es la única parte que baja si consumes menos. En el PVPC el precio cambia cada hora, y en el mercado libre suele ser fijo o tener tres tramos (punta, llano y valle).</p>
+      <p><strong>Cómo bajarlo:</strong> consumir menos o mover los consumos grandes a las <a href="/guias/mejores-horas-poner-lavadora/">horas más baratas</a>.</p>
+
+      <h2>3. Financiación del bono social</h2>
+      <p>Todos los consumidores pagan unos céntimos al día para financiar el descuento a los hogares vulnerables. Es un importe pequeño y no se puede evitar.</p>
+
+      <h2>4. Impuesto eléctrico</h2>
+      <p>Un {(REGULADO.impuestoElectrico * 100).toLocaleString('es-ES', { maximumFractionDigits: 8 })} % sobre la suma de potencia, energía y bono social.</p>
+
+      <h2>5. Alquiler del contador</h2>
+      <p>Si el contador es de la distribuidora (lo normal), pagas {REGULADO.alquilerContadorEurMes.toLocaleString('es-ES')} € al mes por uno inteligente monofásico, sin impuestos.</p>
+
+      <h2>6. IVA</h2>
+      <p>El {Math.round(REGULADO.iva * 100)} % sobre todo lo anterior, incluido el impuesto eléctrico y el contador.</p>
+
+      <h2>Otros datos que aparecen en la factura</h2>
+      <ul>
+        <li><strong>CUPS:</strong> el código que identifica tu punto de suministro. Lo necesitas para cambiar de compañía.</li>
+        <li><strong>Peaje de acceso 2.0TD:</strong> la tarifa de acceso de casi todas las viviendas (hasta 15 kW).</li>
+        <li><strong>Lecturas real o estimada:</strong> si pone "estimada", la compañía ha calculado el consumo sin leer el contador; se regulariza en la siguiente factura.</li>
+        <li><strong>Comercializadora y distribuidora:</strong> la primera te vende la luz y te factura; la segunda es la dueña de los cables y del contador, y es a quien llamas por una avería.</li>
+      </ul>
+    </section>
+  </GuideMeta>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>
