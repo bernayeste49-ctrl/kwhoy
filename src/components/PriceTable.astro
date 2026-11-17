@@ -1,0 +1,20 @@
+---
+import { fmtPrice } from '../lib/prices.js';
+interface Props { day: any }
+const { day } = Astro.props;
+---
+<table class="price-table">
+  <thead>
+    <tr><th>Hora</th><th class="num">€/kWh</th><th>Nivel</th><th>Periodo</th></tr>
+  </thead>
+  <tbody>
+    {day.hours.map((h) => (
+      <tr data-hour={h.hour}>
+        <td>{h.label}</td>
+        <td class="num">{fmtPrice(h.price)}</td>
+        <td><span class={`pill ${h.nivel}`}>{h.nivel === 'barata' ? 'Barata' : h.nivel === 'media' ? 'Media' : 'Cara'}</span></td>
+        <td>{h.periodo.charAt(0).toUpperCase() + h.periodo.slice(1)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>

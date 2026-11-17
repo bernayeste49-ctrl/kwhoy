@@ -1,0 +1,20 @@
+{
+  "name": "kwhoy",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "update-prices": "node scripts/update-prices.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.5",
+    "astro": "^7.4.12"
+  },
+  "private": true,
+  "type": "module"
+}

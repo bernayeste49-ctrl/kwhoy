@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+const email = 'hola@kwhoy.es';
+---
+<Base title="Contacto | kWhoy" description="Contacta con kWhoy para sugerencias, errores en los datos o colaboraciones.">
+  <h1>Contacto</h1>
+  <section class="prose">
+    <p>Para sugerencias, errores en los datos o propuestas de colaboración, escríbenos a <a href={`mailto:${email}`}>{email}</a>. Respondemos normalmente en 48 horas laborables.</p>
+    <p>kWhoy no es una comercializadora de electricidad: no podemos gestionar contratos, facturas ni cambios de tarifa.</p>
+  </section>
+</Base>

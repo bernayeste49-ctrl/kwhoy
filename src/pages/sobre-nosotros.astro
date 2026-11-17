@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Sobre kWhoy" description="Quién hay detrás de kWhoy, de dónde salen los datos del precio de la luz y cómo se calculan.">
+  <h1>Sobre kWhoy</h1>
+  <section class="prose">
+    <p>kWhoy nace con una idea sencilla: que cualquiera pueda saber en cinco segundos cuándo le sale más barato encender la lavadora, el horno o cargar el coche, sin anuncios que tapen la información ni letra pequeña.</p>
+    <p>La web la crea y mantiene <strong>Bernat Yeste</strong>, desarrollador web. Todo el código que calcula los precios, las mejores franjas horarias y el coste de cada electrodoméstico está hecho a medida para esta web.</p>
+    <h2>De dónde salen los datos</h2>
+    <p>Los precios son los del PVPC (tarifa regulada 2.0TD) que publica <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">Red Eléctrica</a> en su API pública de datos. Se descargan automáticamente varias veces al día. Los mostramos en €/kWh, sin IVA ni impuesto eléctrico.</p>
+    <h2>Cómo calculamos</h2>
+    <ul>
+      <li><strong>Horas baratas, medias y caras:</strong> dividimos las horas de cada día en tres grupos iguales según su precio.</li>
+      <li><strong>Periodos valle, llano y punta:</strong> siguen el calendario del peaje 2.0TD, con fines de semana y festivos nacionales en valle.</li>
+      <li><strong>Coste por electrodoméstico:</strong> consumo del aparato (kWh) × precio de cada hora de uso. Los consumos son orientativos y puedes ajustarlos.</li>
+    </ul>
+    <p>¿Has visto un error? Escríbenos desde la página de <a href="/contacto/">contacto</a>.</p>
+  </section>
+</Base>

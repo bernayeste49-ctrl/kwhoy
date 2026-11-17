@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import DayView from '../../components/DayView.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { availableDates, getDay, addDays, longDate, shortDate, fmtPrice } from '../../lib/prices.js';
+
+export function getStaticPaths() {
+  return availableDates().map((fecha) => ({ params: { fecha } }));
+}
+const { fecha } = Astro.params;
+const day = getDay(fecha);
+const prev = getDay(addDays(fecha, -1));
+const next = getDay(addDays(fecha, 1));
+---
+<Base
+  title={`Precio de la luz el ${shortDate(fecha)} de ${fecha.slice(0, 4)} por horas | kWhoy`}
+  description={`Precio de la luz el ${longDate(fecha)}: media de ${fmtPrice(day.avg)} €/kWh, mínimo de ${fmtPrice(day.min)} (${day.cheapest.label}) y máximo de ${fmtPrice(day.max)} (${day.priciest.label}).`}
+>
+  <h1>Precio de la luz el {longDate(fecha)}</h1>
+  <p class="lead">PVPC hora a hora para ese día, con datos de Red Eléctrica.</p>
+  <DayView day={day} />
+  <div class="actions">
+    {prev && <a class="btn secondary" href={`/precio-luz/${prev.iso}/`}>← {shortDate(prev.iso)}</a>}
+    <a class="btn secondary" href="/precio-luz/">Todo el histórico</a>
+    {next && <a class="btn secondary" href={`/precio-luz/${next.iso}/`}>{shortDate(next.iso)} →</a>}
+  </div>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

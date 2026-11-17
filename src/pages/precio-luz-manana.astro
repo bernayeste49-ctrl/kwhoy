@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import DayView from '../components/DayView.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { madridDate, addDays, getDay, shortDate, longDate, fmtPrice } from '../lib/prices.js';
+
+const todayIso = madridDate();
+const tomorrowIso = addDays(todayIso, 1);
+const day = getDay(tomorrowIso);
+---
+<Base
+  title={`Precio de la luz mañana ${shortDate(tomorrowIso)} por horas (PVPC) | kWhoy`}
+  description={day
+    ? `Precio de la luz mañana, ${longDate(tomorrowIso)}: la hora más barata será de ${day.cheapest.label} a ${fmtPrice(day.min)} €/kWh. PVPC hora a hora.`
+    : `Precio de la luz mañana, ${longDate(tomorrowIso)}: Red Eléctrica lo publica a partir de las 20:15. Consulta el PVPC hora a hora.`}
+>
+  <h1>Precio de la luz mañana, {shortDate(tomorrowIso)}, por horas</h1>
+  <p class="lead">Tarifa regulada PVPC para el {longDate(tomorrowIso)}.</p>
+  {day ? (
+    <DayView day={day} />
+  ) : (
+    <div class="notice">
+      <p><strong>El precio de mañana aún no está publicado.</strong> Red Eléctrica lo publica cada tarde a partir de las 20:15 aproximadamente y esta página se actualiza sola poco después.</p>
+      <p><a href="/">Mientras tanto, consulta el precio de la luz de hoy →</a></p>
+    </div>
+  )}
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+  <section class="prose">
+    <h2>¿Para qué sirve saber el precio de mañana?</h2>
+    <p>Saber hoy qué horas serán baratas mañana te permite programar con antelación la lavadora, el lavavajillas o la carga del coche eléctrico. Muchos electrodomésticos tienen inicio diferido: basta con ajustarlo para que arranque en la franja verde.</p>
+  </section>
+</Base>

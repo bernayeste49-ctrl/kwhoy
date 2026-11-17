@@ -1,0 +1,126 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  jsonLd?: object | object[];
+  noindex?: boolean;
+}
+const { title, description, jsonLd, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const adsClient = import.meta.env.PUBLIC_ADSENSE_CLIENT; // ca-pub-XXXXXXXXXXXXXXXX
+const year = new Date().getFullYear();
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="kWhoy" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    {ld.map((o) => <script type="application/ld+json" set:html={JSON.stringify(o)} />)}
+    {adsClient && (
+      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}`} crossorigin="anonymous"></script>
+    )}
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a href="/" class="logo" aria-label="kWhoy, inicio">
+          <span class="logo-bolt" aria-hidden="true">⚡</span>kW<span>hoy</span>
+        </a>
+        <nav aria-label="Principal">
+          <a href="/">Luz hoy</a>
+          <a href="/precio-luz-manana/">Luz mañana</a>
+          <a href="/calculadora-coste-electrodomesticos/">Calculadora</a>
+          <a href="/precio-luz/">Histórico</a>
+        </nav>
+      </div>
+    </header>
+    <main class="wrap">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <p><strong>kWhoy</strong> · Precio de la luz por horas con datos oficiales de <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">Red Eléctrica (REE)</a>.</p>
+        <p class="footer-links">
+          <a href="/sobre-nosotros/">Sobre kWhoy</a>
+          <a href="/contacto/">Contacto</a>
+          <a href="/aviso-legal/">Aviso legal</a>
+          <a href="/privacidad/">Privacidad</a>
+          <a href="/cookies/">Cookies</a>
+        </p>
+        <p class="muted">© {year} kWhoy. La información es orientativa y no sustituye a tu factura ni a la de tu comercializadora.</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --line: #e2e8f0;
+    --brand: #f59e0b; --brand-dark: #b45309; --navy: #0f172a;
+    --barata: #16a34a; --media: #f59e0b; --cara: #dc2626;
+    --barata-bg: #dcfce7; --media-bg: #fef3c7; --cara-bg: #fee2e2;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  a { color: var(--brand-dark); }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  .site-header { background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 10; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; flex-wrap: wrap; }
+  .logo { color: #fff; text-decoration: none; font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
+  .logo span { color: var(--brand); }
+  .logo-bolt { margin-right: 4px; }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav a { color: #cbd5e1; text-decoration: none; padding: 6px 10px; border-radius: 8px; font-size: 0.95rem; }
+  nav a:hover { background: #1e293b; color: #fff; }
+  main { padding-top: 24px; padding-bottom: 48px; }
+  h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.02em; }
+  h2 { font-size: 1.35rem; margin: 36px 0 12px; }
+  h3 { font-size: 1.1rem; margin: 24px 0 8px; }
+  .lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 20px; }
+  .muted { color: var(--muted); font-size: 0.9rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .stat .k { font-size: 0.85rem; color: var(--muted); }
+  .stat .v { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+  .stat .s { font-size: 0.85rem; color: var(--muted); }
+  .stat.barata { border-color: var(--barata); background: var(--barata-bg); }
+  .stat.cara { border-color: var(--cara); background: var(--cara-bg); }
+  .stat.now { border-color: var(--navy); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+  th { background: #f1f5f9; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+  .pill.barata { background: var(--barata-bg); color: #166534; }
+  .pill.media { background: var(--media-bg); color: #92400e; }
+  .pill.cara { background: var(--cara-bg); color: #991b1b; }
+  tr.current td { background: #eef2ff; font-weight: 700; }
+  .notice { background: var(--media-bg); border: 1px solid var(--media); border-radius: var(--radius); padding: 12px 16px; margin: 16px 0; }
+  .btn { display: inline-block; background: var(--navy); color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; border: 0; cursor: pointer; font-size: 1rem; }
+  .btn.secondary { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
+  .prose p, .prose li { max-width: 72ch; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 8px 0; }
+  summary { font-weight: 600; cursor: pointer; }
+  .site-footer { border-top: 1px solid var(--line); background: #fff; padding: 24px 0; font-size: 0.95rem; }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
+  .ad-slot { margin: 24px 0; min-height: 100px; }
+  @media (max-width: 600px) { th, td { padding: 8px; font-size: 0.9rem; } nav a { padding: 6px 8px; font-size: 0.9rem; } }
+</style>

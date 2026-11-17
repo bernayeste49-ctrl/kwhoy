@@ -1,0 +1,61 @@
+name: Actualizar precios y publicar
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # UTC. Precios de mañana (REE publica ~20:15 hora peninsular) y cambio de día.
+    - cron: '45 19 * * *'
+    - cron: '30 20 * * *'
+    - cron: '30 21 * * *'
+    - cron: '5 22 * * *'
+    - cron: '5 23 * * *'
+    - cron: '0 6 * * *'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Descargar precios de Red Eléctrica
+        run: node scripts/update-prices.mjs
+      - name: Guardar histórico en el repositorio
+        run: |
+          git config user.name "kwhoy-bot"
+          git config user.email "bot@kwhoy.es"
+          git add src/data/prices.json
+          git diff --cached --quiet || (git commit -m "Precios $(date -u +%F)" && git push)
+      - name: Construir la web
+        run: npm run build
+        env:
+          PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
+          PUBLIC_AD_SLOT_HOME: ${{ vars.PUBLIC_AD_SLOT_HOME }}
+          PUBLIC_AD_SLOT_CALC: ${{ vars.PUBLIC_AD_SLOT_CALC }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

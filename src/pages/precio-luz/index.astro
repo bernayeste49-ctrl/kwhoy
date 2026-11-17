@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import { availableDates, getDay, longDate, fmtPrice } from '../../lib/prices.js';
+const days = availableDates().map((iso) => getDay(iso));
+---
+<Base title="Histórico del precio de la luz por días (PVPC) | kWhoy" description="Histórico diario del precio de la luz PVPC: precio medio, hora más barata y más cara de cada día, con datos de Red Eléctrica.">
+  <h1>Histórico del precio de la luz</h1>
+  <p class="lead">Precio medio, mínimo y máximo de la tarifa PVPC día a día. Pulsa en una fecha para ver sus precios hora a hora.</p>
+  <table>
+    <thead><tr><th>Día</th><th class="num">Media €/kWh</th><th class="num">Mínimo</th><th class="num">Máximo</th></tr></thead>
+    <tbody>
+      {days.map((d) => (
+        <tr>
+          <td><a href={`/precio-luz/${d.iso}/`}>{longDate(d.iso)}</a></td>
+          <td class="num">{fmtPrice(d.avg)}</td>
+          <td class="num">{fmtPrice(d.min)}</td>
+          <td class="num">{fmtPrice(d.max)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</Base>
