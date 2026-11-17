@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { madridDate, addDays, getDay } from '../lib/prices.js';
+import { REGULADO } from '../lib/tarifas.js';
+
+const todayIso = madridDate();
+const pack = (d) => (d ? { iso: d.iso, p: d.hours.map((h) => [h.hour, h.price]) } : null);
+const initial = [pack(getDay(todayIso)), pack(getDay(addDays(todayIso, 1)))].filter(Boolean);
+const impuestos = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+
+const faqs = [
+  ['¿Cuánto cuesta cargar un coche eléctrico en casa?', 'Depende de cuántos kWh cargues y de la hora. Con el PVPC, una carga de 40 kWh puede costar desde unos 4 € en las horas más baratas hasta más de 12 € en las más caras, impuestos incluidos. La calculadora lo calcula con los precios reales de hoy.'],
+  ['¿A qué hora es más barato cargar el coche?', 'Normalmente de madrugada (de 00:00 a 08:00, periodo valle) y, en días de mucho sol, a mediodía. Programa la carga en el coche o en el cargador para que empiece en la franja que te indica la calculadora.'],
+  ['¿Qué potencia de carga uso?', 'Un enchufe doméstico carga a unos 2,3 kW; un wallbox monofásico, a 7,4 kW. Cuanta más potencia, menos horas necesitas y más fácil es encajar la carga en las horas baratas, pero puede que tengas que subir la potencia contratada.'],
+  ['¿Sale más barato que la gasolina?', 'Casi siempre, si cargas en casa en horas valle. La calculadora compara el coste por cada 100 km con un coche de gasolina usando el consumo y el precio del litro que tú indiques.'],
+];
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Calculadora de coste de carga del coche eléctrico', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+];
+---
+<Base
+  title="¿Cuánto cuesta cargar el coche eléctrico en casa? Calculadora por horas | kWhoy"
+  description="Calcula cuánto cuesta cargar tu coche eléctrico en casa con el precio de la luz de hoy, a qué hora es más barato y cuánto ahorras frente a la gasolina cada 100 km."
+  jsonLd={jsonLd}
+>
+  <h1>¿Cuánto cuesta cargar el coche eléctrico en casa?</h1>
+  <p class="lead">Con el precio de la luz de hoy (PVPC): coste de la carga, mejor hora para enchufarlo y comparación con la gasolina.</p>
+
+  <form class="card calc" onsubmit="return false">
+    <div class="row">
+      <label>Energía a cargar (kWh)<input id="kwh" type="number" step="1" min="1" value="40" inputmode="numeric" /></label>
+      <label>Potencia de carga
+        <select id="kw">
+          <option value="2.3">Enchufe doméstico (2,3 kW)</option>
+          <option value="3.7">Wallbox 16 A (3,7 kW)</option>
+          <option value="7.4" selected>Wallbox 32 A (7,4 kW)</option>
+        </select>
+      </label>
+    </div>
+    <div class="row">
+      <label>Consumo del coche (kWh/100 km)<input id="cons" type="number" step="0.5" min="5" value="16" inputmode="decimal" /></label>
+      <label>Gasolina: precio por litro (€)<input id="gas" type="number" step="0.01" min="0" value="1.55" inputmode="decimal" /></label>
+    </div>
+    <label class="half">Coche de gasolina equivalente (l/100 km)<input id="lgas" type="number" step="0.1" min="1" value="6.5" inputmode="decimal" /></label>
+    <p class="muted">Cambia el precio de la gasolina y los consumos por los tuyos. Las pérdidas de carga (10 %) ya están incluidas.</p>
+  </form>
+
+  <div class="grid-stats">
+    <div class="stat now"><div class="k">Si enchufas ahora</div><div class="v" id="r-now">—</div><div class="s" id="r-now-s"></div></div>
+    <div class="stat barata"><div class="k">Mejor momento para cargar</div><div class="v" id="r-best">—</div><div class="s" id="r-best-s"></div></div>
+    <div class="stat"><div class="k">Cada 100 km</div><div class="v" id="r-100">—</div><div class="s" id="r-100-s"></div></div>
+  </div>
+  <p class="muted" id="note">Precios PVPC con impuesto eléctrico e IVA. Se tienen en cuenta las horas que quedan de hoy y, si ya están publicadas, las de mañana.</p>
+
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_CALC} />
+
+  <section class="prose">
+    <h2>Cómo se calcula</h2>
+    <p>Dividimos la energía que quieres cargar entre la potencia del cargador para saber cuántas horas tarda, sumamos un 10 % de pérdidas y multiplicamos cada hora por su precio del PVPC, con impuesto eléctrico e IVA. Después buscamos la hora de inicio más barata. El coste por 100 km usa el precio medio de esa franja.</p>
+    <p>No incluye el término de potencia, porque lo pagas igual cargues o no. Si vas a instalar un wallbox, revisa con la <a href="/calculadora-potencia-contratada/">calculadora de potencia contratada</a> si te hace falta subirla.</p>
+    <h2>Preguntas frecuentes</h2>
+    {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+  </section>
+</Base>
+
+<script is:inline define:vars={{ initial, impuestos }}>
+  (function () {
+    var days = initial, $ = function (id) { return document.getElementById(id); };
+    var num = function (id) { return parseFloat(String($(id).value).replace(',', '.')) || 0; };
+    var eur = function (v) { return v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }); };
+    var hh = function (h) { return String(h % 24).padStart(2, '0') + ':00'; };
+    function madridNow() {
+      var f = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
+      var p = {}; f.formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+      return { iso: p.year + '-' + p.month + '-' + p.day, hour: Number(p.hour) % 24 };
+    }
+    function series() {
+      var now = madridNow(), out = [];
+      days.forEach(function (d) { d.p.forEach(function (x) {
+        if (d.iso > now.iso || (d.iso === now.iso && x[0] >= now.hour)) out.push({ hour: x[0], price: x[1] * impuestos, today: d.iso === now.iso });
+      }); });
+      return out;
+    }
+    function calc() {
+      var kwh = num('kwh') * 1.1, kw = num('kw'), s = series();
+      var hours = kwh / kw, n = Math.ceil(hours);
+      if (!(kwh > 0) || s.length < n) { $('r-now').textContent = '—'; $('note').textContent = 'No hay suficientes horas con precio publicado para esta carga. Prueba con menos kWh o vuelve después de las 20:15, cuando se publican los precios de mañana.'; return; }
+      var cost = function (i) { var t = 0, left = hours; for (var k = 0; k < n; k++) { var f = Math.min(1, left); t += s[i + k].price * kw * f; left -= f; } return t; };
+      var nowC = cost(0), best = 0, bestC = nowC;
+      for (var i = 1; i + n <= s.length; i++) { var c = cost(i); if (c < bestC) { bestC = c; best = i; } }
+      $('r-now').textContent = eur(nowC);
+      $('r-now-s').textContent = 'de ' + hh(s[0].hour) + ' a ' + hh(s[0].hour + n) + ' (' + hours.toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' h)';
+      $('r-best').textContent = eur(bestC);
+      $('r-best-s').textContent = 'empezando ' + (s[best].today ? 'hoy' : 'mañana') + ' a las ' + hh(s[best].hour) + (nowC - bestC > 0.01 ? ' · ahorras ' + eur(nowC - bestC) : ' · ahora es el mejor momento');
+      var perKwh = bestC / num('kwh'), e100 = perKwh * num('cons'), g100 = num('lgas') * num('gas');
+      $('r-100').textContent = eur(e100);
+      $('r-100-s').textContent = 'frente a ' + eur(g100) + ' con gasolina (' + (g100 > 0 ? Math.round((1 - e100 / g100) * 100) : 0) + ' % menos)';
+    }
+    ['kwh', 'kw', 'cons', 'gas', 'lgas'].forEach(function (id) { $(id).addEventListener('input', calc); });
+    calc();
+    var now = madridNow(), d = new Date(now.iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + 1);
+    fetch('https://apidatos.ree.es/es/datos/mercados/precios-mercados-tiempo-real?start_date=' + now.iso + 'T00:00&end_date=' + d.toISOString().slice(0, 10) + 'T23:59&time_trunc=hour')
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var pv = j.included.find(function (x) { return x.type === 'PVPC'; }); if (!pv) return;
+        var map = {}; pv.attributes.values.forEach(function (v) { var iso = v.datetime.slice(0, 10); (map[iso] = map[iso] || []).push([Number(v.datetime.slice(11, 13)), v.value / 1000]); });
+        var fresh = Object.keys(map).sort().map(function (iso) { return { iso: iso, p: map[iso] }; });
+        if (fresh.length) { days = fresh; calc(); }
+      }).catch(function () {});
+  })();
+</script>
+
+<style>
+  .calc { display: grid; gap: 12px; margin: 16px 0; }
+  .calc label { display: grid; gap: 4px; font-weight: 600; font-size: 0.95rem; }
+  .calc .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .calc .half { max-width: calc(50% - 6px); }
+  .calc input, .calc select { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  @media (max-width: 600px) { .calc .row { grid-template-columns: 1fr; } .calc .half { max-width: none; } }
+</style>

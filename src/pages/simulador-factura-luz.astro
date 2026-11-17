@@ -1,0 +1,113 @@
+---
+import Base from '../layouts/Base.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { REGULADO } from '../lib/tarifas.js';
+import { avgLastDays, shortDate, fmtPrice } from '../lib/prices.js';
+
+const media = avgLastDays(30);
+const cfg = { ...REGULADO, pvpcMedio: media.avg };
+const faqs = [
+  ['¿Qué es mejor, el PVPC o el mercado libre?', 'Depende del precio que te ofrezcan y de cuándo consumes. El PVPC sigue al mercado cada hora: suele ganar cuando los precios mayoristas están bajos y si concentras el consumo en horas baratas. Una tarifa fija te protege de los picos, pero no aprovecha las horas baratas. Con el simulador ves la diferencia en euros para tu caso.'],
+  ['¿Qué potencia tengo contratada?', 'Aparece en tu factura como "potencia contratada" en kW. En la mayoría de viviendas está entre 3,45 y 5,75 kW. Si no sabes cuál necesitas, usa la calculadora de potencia contratada.'],
+  ['¿Por qué mi factura real no coincide exactamente?', 'Cada factura cubre unos días concretos, tu consumo no se reparte igual en todas las horas y algunas comercializadoras añaden servicios. El simulador usa el precio medio del PVPC de los últimos 30 días y los conceptos regulados vigentes, así que da una estimación muy cercana pero no idéntica.'],
+];
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Simulador de factura de la luz', applicationCategory: 'FinanceApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+];
+const n = (v, d = 2) => v.toLocaleString('es-ES', { minimumFractionDigits: d, maximumFractionDigits: d });
+---
+<Base
+  title="Simulador de factura de la luz: PVPC o mercado libre | kWhoy"
+  description="Calcula cuánto pagarás de luz este mes con la tarifa regulada (PVPC) o con una oferta de mercado libre: potencia, energía, impuestos y alquiler del contador desglosados."
+  jsonLd={jsonLd}
+>
+  <h1>Simulador de factura de la luz</h1>
+  <p class="lead">Pon tu potencia, tu consumo y la oferta que te han hecho. Te decimos cuánto pagarías con la tarifa regulada (PVPC) y con el mercado libre, con todos los impuestos.</p>
+
+  <form class="card calc" id="f" onsubmit="return false">
+    <div class="row">
+      <label>Potencia contratada (kW)<input id="kw" type="number" step="0.01" min="1" value="4.6" inputmode="decimal" /></label>
+      <label>Consumo al mes (kWh)<input id="kwh" type="number" step="1" min="0" value="270" inputmode="numeric" /></label>
+    </div>
+    <fieldset>
+      <legend>Oferta de mercado libre (mira tu contrato o la web de la compañía)</legend>
+      <div class="row">
+        <label>Precio de la energía (€/kWh)<input id="le" type="number" step="0.001" min="0" value="0.130" inputmode="decimal" /></label>
+        <label>Precio de la potencia (€/kW y día)<input id="lp" type="number" step="0.0001" min="0" value="0.0900" inputmode="decimal" /></label>
+      </div>
+      <p class="muted">Los valores que aparecen son un ejemplo: cámbialos por los de tu oferta.</p>
+    </fieldset>
+  </form>
+
+  <div class="grid-stats">
+    <div class="stat"><div class="k">Tarifa regulada (PVPC)</div><div class="v" id="t-pvpc">—</div><div class="s">al mes, con impuestos</div></div>
+    <div class="stat"><div class="k">Mercado libre</div><div class="v" id="t-libre">—</div><div class="s">al mes, con impuestos</div></div>
+    <div class="stat" id="box-win"><div class="k">Te sale más barato</div><div class="v" id="t-win">—</div><div class="s" id="t-diff"></div></div>
+  </div>
+
+  <table id="desglose">
+    <thead><tr><th>Concepto</th><th class="num">PVPC</th><th class="num">Mercado libre</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="muted">PVPC estimado con el precio medio de los últimos {media.dias} días ({fmtPrice(media.avg)} €/kWh, del {shortDate(media.desde)} al {shortDate(media.hasta)}), repartiendo el consumo por igual entre las horas. Si consumes más en horas baratas, pagarás menos.</p>
+
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_CALC} />
+
+  <section class="prose">
+    <h2>Qué incluye la factura de la luz</h2>
+    <ul>
+      <li><strong>Término de potencia:</strong> lo que pagas por tener contratados unos kW, consumas o no. En el PVPC son {n(REGULADO.potenciaPuntaEurKwDia, 4)} €/kW al día en punta y {n(REGULADO.potenciaValleEurKwDia, 4)} €/kW al día en valle (peajes, cargos y margen de comercialización).</li>
+      <li><strong>Término de energía:</strong> los kWh que consumes por su precio. En el PVPC cambia cada hora; consúltalo en el <a href="/">precio de la luz hoy</a>.</li>
+      <li><strong>Financiación del bono social:</strong> unos céntimos al día que pagan todos los consumidores.</li>
+      <li><strong>Impuesto eléctrico:</strong> {n(REGULADO.impuestoElectrico * 100, 2)} % sobre potencia, energía y bono social.</li>
+      <li><strong>Alquiler del contador:</strong> {n(REGULADO.alquilerContadorEurMes)} € al mes para un contador inteligente monofásico.</li>
+      <li><strong>IVA:</strong> {n(REGULADO.iva * 100, 0)} % sobre todo lo anterior.</li>
+    </ul>
+    <p class="muted">Valores regulados revisados el {REGULADO.actualizado}. Si el Gobierno rebaja el IVA o el impuesto eléctrico, actualizaremos el simulador.</p>
+    <h2>Preguntas frecuentes</h2>
+    {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+  </section>
+</Base>
+
+<script is:inline define:vars={{ cfg }}>
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var num = function (id) { return parseFloat(String($(id).value).replace(',', '.')) || 0; };
+    var eur = function (v) { return v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' }); };
+    function factura(kw, kwh, precioE, pPunta, pValle) {
+      var dias = 30, potencia = kw * dias * (pPunta + pValle), energia = kwh * precioE, bono = cfg.bonoSocialEurDia * dias;
+      var iee = (potencia + energia + bono) * cfg.impuestoElectrico, contador = cfg.alquilerContadorEurMes;
+      var base = potencia + energia + bono + iee + contador, iva = base * cfg.iva;
+      return { potencia: potencia, energia: energia, bono: bono, iee: iee, contador: contador, iva: iva, total: base + iva };
+    }
+    function calc() {
+      var kw = num('kw'), kwh = num('kwh');
+      var a = factura(kw, kwh, cfg.pvpcMedio, cfg.potenciaPuntaEurKwDia, cfg.potenciaValleEurKwDia);
+      var b = factura(kw, kwh, num('le'), num('lp'), 0);
+      $('t-pvpc').textContent = eur(a.total);
+      $('t-libre').textContent = eur(b.total);
+      var d = a.total - b.total, win = d > 0 ? 'Mercado libre' : 'PVPC';
+      $('t-win').textContent = Math.abs(d) < 0.5 ? 'Empate' : win;
+      $('t-diff').textContent = Math.abs(d) < 0.5 ? 'menos de 0,50 € de diferencia' : eur(Math.abs(d)) + ' al mes · ' + eur(Math.abs(d) * 12) + ' al año';
+      $('box-win').className = 'stat barata';
+      var rows = [['Potencia', 'potencia'], ['Energía', 'energia'], ['Bono social', 'bono'], ['Impuesto eléctrico', 'iee'], ['Alquiler del contador', 'contador'], ['IVA', 'iva'], ['Total', 'total']];
+      document.querySelector('#desglose tbody').innerHTML = rows.map(function (r) {
+        var bold = r[1] === 'total' ? ' style="font-weight:700"' : '';
+        return '<tr' + bold + '><td>' + r[0] + '</td><td class="num">' + eur(a[r[1]]) + '</td><td class="num">' + eur(b[r[1]]) + '</td></tr>';
+      }).join('');
+    }
+    ['kw', 'kwh', 'le', 'lp'].forEach(function (id) { $(id).addEventListener('input', calc); });
+    calc();
+  })();
+</script>
+
+<style>
+  .calc { display: grid; gap: 12px; margin: 16px 0; }
+  .calc label { display: grid; gap: 4px; font-weight: 600; font-size: 0.95rem; }
+  .calc .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .calc input { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  fieldset { border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  legend { font-weight: 600; font-size: 0.9rem; padding: 0 4px; }
+  @media (max-width: 600px) { .calc .row { grid-template-columns: 1fr; } }
+</style>

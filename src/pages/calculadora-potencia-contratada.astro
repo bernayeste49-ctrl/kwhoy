@@ -1,0 +1,104 @@
+---
+import Base from '../layouts/Base.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { REGULADO, POTENCIAS_NORMALIZADAS } from '../lib/tarifas.js';
+
+// Potencias típicas (W) de aparatos domésticos, orientativas
+const aparatos = [
+  { id: 'nevera', n: 'Frigorífico', w: 150, on: true },
+  { id: 'luces', n: 'Iluminación de la casa', w: 300, on: true },
+  { id: 'tv', n: 'Televisión y router', w: 200, on: true },
+  { id: 'lavadora', n: 'Lavadora (calentando agua)', w: 2000, on: false },
+  { id: 'lavavajillas', n: 'Lavavajillas', w: 1800, on: false },
+  { id: 'horno', n: 'Horno', w: 2200, on: false },
+  { id: 'vitro', n: 'Vitrocerámica o inducción (2 fuegos)', w: 2500, on: true },
+  { id: 'micro', n: 'Microondas', w: 1000, on: false },
+  { id: 'secadora', n: 'Secadora', w: 2500, on: false },
+  { id: 'termo', n: 'Termo eléctrico', w: 1500, on: false },
+  { id: 'aire', n: 'Aire acondicionado o bomba de calor', w: 1500, on: false },
+  { id: 'secador', n: 'Secador de pelo o plancha', w: 1800, on: false },
+  { id: 'wallbox', n: 'Cargador de coche eléctrico (7,4 kW)', w: 7400, on: false },
+];
+const cfg = { ...REGULADO, potencias: POTENCIAS_NORMALIZADAS };
+const faqs = [
+  ['¿Qué potencia necesito en casa?', 'Suma la potencia de los aparatos que sueles usar a la vez y elige la potencia normalizada inmediatamente superior. En un piso sin calefacción eléctrica suele bastar con 3,45 o 4,6 kW; con aire acondicionado, horno y vitro a la vez, 5,75 kW o más.'],
+  ['¿Qué pasa si me quedo corto?', 'Si superas la potencia contratada, salta el interruptor de control de potencia (ICP) y te quedas sin luz hasta que bajes el consumo y lo vuelvas a subir. Puedes evitarlo sin subir la potencia si no enciendes a la vez los aparatos más potentes.'],
+  ['¿Cuánto cuesta cambiar la potencia?', 'Bajar potencia suele ser gratis o muy barato. Subirla tiene unos derechos de acceso y extensión que cobra la distribuidora. Además, la normativa limita los cambios: consulta las condiciones con tu comercializadora antes de pedirlo.'],
+  ['¿Puedo contratar potencias distintas en punta y valle?', 'Sí. Con el peaje 2.0TD puedes tener más potencia en valle (de 00:00 a 08:00 y fines de semana), útil si cargas el coche de noche, y menos en punta, que es la cara.'],
+];
+const jsonLd = [
+  { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Calculadora de potencia contratada', applicationCategory: 'UtilitiesApplication', operatingSystem: 'Web', offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+];
+---
+<Base
+  title="Calculadora de potencia contratada: ¿qué potencia de luz necesito? | kWhoy"
+  description="Marca los aparatos que usas a la vez y descubre qué potencia de luz necesitas, cuánto pagas al año por ella y cuánto ahorrarías bajándola."
+  jsonLd={jsonLd}
+>
+  <h1>¿Qué potencia de luz necesito?</h1>
+  <p class="lead">Marca los aparatos que sueles tener encendidos <strong>a la vez</strong> en el peor momento del día (por ejemplo, mientras cocinas). Te decimos qué potencia contratar y cuánto cuesta al año.</p>
+
+  <div class="grid-layout">
+    <form class="card list" id="f" onsubmit="return false">
+      {aparatos.map((a) => (
+        <label class="ap"><input type="checkbox" data-w={a.w} checked={a.on} /> <span>{a.n}</span> <span class="w">{a.w.toLocaleString('es-ES')} W</span></label>
+      ))}
+      <label class="ap actual">Tu potencia actual (kW)
+        <select id="actual">{POTENCIAS_NORMALIZADAS.map((p) => <option value={p} selected={p === 4.6}>{p.toLocaleString('es-ES')} kW</option>)}</select>
+      </label>
+    </form>
+    <div>
+      <div class="stat barata"><div class="k">Potencia recomendada</div><div class="v" id="r-kw">—</div><div class="s" id="r-sum"></div></div>
+      <div class="stat" style="margin-top:12px"><div class="k">Coste anual de esa potencia</div><div class="v" id="r-cost">—</div><div class="s">PVPC, con impuesto eléctrico e IVA</div></div>
+      <div class="stat" style="margin-top:12px" id="box-diff"><div class="k">Frente a tu potencia actual</div><div class="v" id="r-diff">—</div><div class="s" id="r-diff-s"></div></div>
+    </div>
+  </div>
+  <p class="muted">Potencias orientativas. Las reales de tus aparatos están en su etiqueta (en vatios, W). Añadimos un margen del 10 % para arranques.</p>
+
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_CALC} />
+
+  <section class="prose">
+    <h2>Potencias normalizadas</h2>
+    <p>En viviendas con instalación monofásica solo se pueden contratar estos valores: {POTENCIAS_NORMALIZADAS.map((p) => p.toLocaleString('es-ES')).join(', ')} kW. La calculadora te propone el primero que cubre tu consumo simultáneo.</p>
+    <h2>Cuánto cuesta cada kW</h2>
+    <p>Con la tarifa regulada, cada kW contratado cuesta unos {((REGULADO.potenciaPuntaEurKwDia + REGULADO.potenciaValleEurKwDia) * 365 * (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva)).toLocaleString('es-ES', { maximumFractionDigits: 0 })} € al año con impuestos, uses la luz o no. Por eso tener más potencia de la necesaria es uno de los gastos más fáciles de recortar.</p>
+    <h2>Preguntas frecuentes</h2>
+    {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+  </section>
+</Base>
+
+<script is:inline define:vars={{ cfg }}>
+  (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var eur = function (v) { return v.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }); };
+    var kwFmt = function (v) { return v.toLocaleString('es-ES') + ' kW'; };
+    var anual = function (kw) { return kw * (cfg.potenciaPuntaEurKwDia + cfg.potenciaValleEurKwDia) * 365 * (1 + cfg.impuestoElectrico) * (1 + cfg.iva); };
+    function calc() {
+      var w = 0; document.querySelectorAll('#f input[type=checkbox]').forEach(function (c) { if (c.checked) w += Number(c.dataset.w); });
+      var need = w * 1.1 / 1000;
+      var rec = cfg.potencias.find(function (p) { return p >= need; }) || cfg.potencias[cfg.potencias.length - 1];
+      $('r-kw').textContent = kwFmt(rec);
+      $('r-sum').textContent = 'Simultáneo: ' + (w / 1000).toLocaleString('es-ES', { maximumFractionDigits: 2 }) + ' kW (+10 % de margen)';
+      $('r-cost').textContent = eur(anual(rec));
+      var act = Number($('actual').value), d = anual(act) - anual(rec);
+      if (Math.abs(d) < 1) { $('r-diff').textContent = 'Ya tienes la adecuada'; $('r-diff-s').textContent = ''; }
+      else if (d > 0) { $('r-diff').textContent = 'Ahorras ' + eur(d) + '/año'; $('r-diff-s').textContent = 'bajando de ' + kwFmt(act) + ' a ' + kwFmt(rec); }
+      else { $('r-diff').textContent = 'Te falta potencia'; $('r-diff-s').textContent = 'con ' + kwFmt(act) + ' podría saltar el ICP; subir a ' + kwFmt(rec) + ' cuesta ' + eur(-d) + '/año más'; }
+    }
+    document.querySelectorAll('#f input, #f select').forEach(function (e) { e.addEventListener('change', calc); });
+    calc();
+  })();
+</script>
+
+<style>
+  .grid-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin: 16px 0; align-items: start; }
+  .list { display: grid; gap: 2px; padding: 8px 12px; }
+  .ap { display: flex; gap: 10px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .ap:last-child { border-bottom: 0; }
+  .ap input { width: 20px; height: 20px; accent-color: var(--navy); }
+  .ap .w { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ap.actual { display: grid; gap: 4px; font-weight: 600; cursor: default; }
+  .ap select { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  @media (max-width: 700px) { .grid-layout { grid-template-columns: 1fr; } }
+</style>

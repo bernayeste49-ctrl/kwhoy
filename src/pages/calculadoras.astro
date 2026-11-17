@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+const tools = [
+  ['/calculadora-coste-electrodomesticos/', '¿Cuánto cuesta poner la lavadora ahora?', 'Coste de usar cada electrodoméstico ahora y a qué hora sale más barato.'],
+  ['/simulador-factura-luz/', 'Simulador de factura de la luz', 'Tu factura mensual con el PVPC frente a una oferta de mercado libre, con impuestos.'],
+  ['/coste-cargar-coche-electrico/', 'Coste de cargar el coche eléctrico', 'Cuánto cuesta la carga, la mejor hora para enchufarlo y el ahorro frente a la gasolina.'],
+  ['/calculadora-potencia-contratada/', 'Calculadora de potencia contratada', 'Qué potencia necesitas según tus aparatos y cuánto ahorras bajándola.'],
+];
+---
+<Base title="Calculadoras de luz: factura, potencia, coche eléctrico | kWhoy" description="Calculadoras gratuitas para ahorrar en la factura de la luz: coste de los electrodomésticos, simulador de factura, carga del coche eléctrico y potencia contratada.">
+  <h1>Calculadoras para ahorrar en la luz</h1>
+  <p class="lead">Herramientas gratuitas que usan el precio real de la luz de hoy. Sin registro: todo se calcula en tu navegador.</p>
+  <div class="tools">
+    {tools.map(([href, t, d]) => (
+      <a class="card tool" href={href}><strong>{t}</strong><span>{d}</span></a>
+    ))}
+  </div>
+</Base>
+<style>
+  .tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 16px 0; }
+  .tool { display: grid; gap: 6px; text-decoration: none; color: var(--text); }
+  .tool:hover { border-color: var(--navy); }
+  .tool span { color: var(--muted); font-size: 0.95rem; }
+</style>

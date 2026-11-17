@@ -105,3 +105,10 @@ export function vsPrevious(day) {
   if (!prev) return null;
   return ((day.avg - prev.avg) / prev.avg) * 100;
 }
+
+/** Precio medio PVPC (€/kWh) de los últimos n días disponibles */
+export function avgLastDays(n = 30) {
+  const ds = availableDates().slice(0, n).map((iso) => getDay(iso));
+  const avg = ds.reduce((s, d) => s + d.avg, 0) / ds.length;
+  return { avg, dias: ds.length, desde: ds[ds.length - 1].iso, hasta: ds[0].iso };
+}
