@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
-import DayView from '../components/DayView.astro';
+import DayHero from '../components/DayHero.astro';
+import DayDetails from '../components/DayDetails.astro';
+import { weekday } from '../lib/prices.js';
 import AdSlot from '../components/AdSlot.astro';
 import { madridDate, addDays, getDay, shortDate, longDate, fmtPrice } from '../lib/prices.js';
 
@@ -14,15 +16,14 @@ const day = getDay(tomorrowIso);
     ? `Precio de la luz mañana, ${longDate(tomorrowIso)}: la hora más barata será de ${day.cheapest.label} a ${fmtPrice(day.min)} €/kWh. PVPC hora a hora.`
     : `Precio de la luz mañana, ${longDate(tomorrowIso)}: Red Eléctrica lo publica a partir de las 20:15. Consulta el PVPC hora a hora.`}
 >
-  <h1>Precio de la luz mañana, {shortDate(tomorrowIso)}, por horas</h1>
-  <p class="lead">Tarifa regulada PVPC para el {longDate(tomorrowIso)}.</p>
+  {day && <DayHero slot="hero" day={day} kicker={longDate(tomorrowIso).replace(/^./, (c) => c.toUpperCase())} title="Precio de la luz mañana por horas" note="Tarifa regulada PVPC publicada por Red Eléctrica. Programa con tiempo la lavadora o la carga del coche." />}
   {day ? (
-    <DayView day={day} />
+    <DayDetails day={day} />
   ) : (
-    <div class="notice">
+    <><h1>Precio de la luz mañana, {shortDate(tomorrowIso)}</h1><div class="notice">
       <p><strong>El precio de mañana aún no está publicado.</strong> Red Eléctrica lo publica cada tarde a partir de las 20:15 aproximadamente y esta página se actualiza sola poco después.</p>
-      <p><a href="/">Mientras tanto, consulta el precio de la luz de hoy →</a></p>
-    </div>
+      <p><a href="/">Mientras tanto, consulta el precio de la luz de hoy</a></p>
+    </div></>
   )}
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
   <section class="prose">

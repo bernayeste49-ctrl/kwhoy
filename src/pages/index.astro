@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import DayView from '../components/DayView.astro';
+import DayHero from '../components/DayHero.astro';
+import DayDetails from '../components/DayDetails.astro';
 import AdSlot from '../components/AdSlot.astro';
 import { madridDate, addDays, getDay, availableDates, shortDate, longDate, fmtPrice } from '../lib/prices.js';
 
@@ -28,33 +29,31 @@ const actualizado = new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid'
   description={`Precio de la luz hoy, ${longDate(day.iso)}: la hora más barata cuesta ${fmtPrice(day.min)} €/kWh (${day.cheapest.label}). Tabla y gráfico del PVPC hora a hora con datos de Red Eléctrica.`}
   jsonLd={jsonLd}
 >
-  <h1>Precio de la luz hoy, {shortDate(day.iso)}, por horas</h1>
-  <p class="lead">Tarifa regulada PVPC para el {longDate(day.iso)}. Datos oficiales de Red Eléctrica. Última actualización: {actualizado}.</p>
-  {!isToday && <div class="notice">Todavía no tenemos los precios de hoy. Te mostramos los últimos disponibles ({longDate(day.iso)}).</div>}
+  <DayHero slot="hero" day={day} live={isToday} kicker={longDate(day.iso).replace(/^./, (c) => c.toUpperCase())} title="Precio de la luz hoy por horas" note={isToday ? `Tarifa regulada PVPC. Datos de Red Eléctrica, actualizados el ${actualizado}.` : `Aún no tenemos los precios de hoy: te mostramos los últimos disponibles.`} />
 
-  <DayView day={day} live={isToday} />
+  <DayDetails day={day} />
 
   <div class="actions">
-    <a class="btn" href="/precio-luz-manana/">{tomorrow ? `Ver precio de mañana, ${shortDate(tomorrow.iso)}` : 'Precio de la luz mañana'}</a>
-    <a class="btn secondary" href="/calculadora-coste-electrodomesticos/">¿Cuánto cuesta poner la lavadora ahora?</a>
+    <a class="btn" href="/precio-luz-manana/">{tomorrow ? `Ver el precio de mañana, ${shortDate(tomorrow.iso)}` : 'Precio de la luz mañana'}</a>
+    <a class="btn secondary" href="/calculadora-coste-electrodomesticos/">Calcular cuánto cuesta poner la lavadora</a>
   </div>
 
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
 
-  <h2>Calculadoras para ahorrar</h2>
-  <ul>
-    <li><a href="/calculadora-coste-electrodomesticos/">¿Cuánto cuesta poner la lavadora ahora?</a></li>
-    <li><a href="/simulador-factura-luz/">Simulador de factura: PVPC o mercado libre</a></li>
-    <li><a href="/coste-cargar-coche-electrico/">Coste de cargar el coche eléctrico en casa</a></li>
-    <li><a href="/calculadora-potencia-contratada/">¿Qué potencia de luz necesito?</a></li>
+  <h2>Calculadoras para pagar menos</h2>
+  <ul class="linklist">
+    <li><a href="/calculadora-coste-electrodomesticos/">¿Cuánto cuesta poner la lavadora ahora?<span>Coste de cada aparato y la hora más barata para usarlo.</span></a></li>
+    <li><a href="/simulador-factura-luz/">Simulador de factura<span>Tu factura con el PVPC frente a una oferta de mercado libre.</span></a></li>
+    <li><a href="/coste-cargar-coche-electrico/">Cargar el coche eléctrico en casa<span>Coste de la carga y ahorro frente a la gasolina.</span></a></li>
+    <li><a href="/calculadora-potencia-contratada/">¿Qué potencia de luz necesito?<span>La potencia justa para tus aparatos y lo que ahorras.</span></a></li>
   </ul>
   <h2>Guías</h2>
-  <ul>
-    <li><a href="/guias/mejores-horas-poner-lavadora/">Las mejores horas para poner la lavadora (datos del último mes)</a></li>
-    <li><a href="/guias/como-leer-factura-luz/">Cómo leer la factura de la luz</a></li>
-    <li><a href="/guias/pvpc-o-mercado-libre/">PVPC o mercado libre: cuál te conviene</a></li>
-    <li><a href="/guias/bajar-potencia-contratada/">Cómo bajar la potencia contratada</a></li>
-    <li><a href="/guias/bono-social-electrico/">Bono social eléctrico 2026</a></li>
+  <ul class="linklist">
+    <li><a href="/guias/mejores-horas-poner-lavadora/">Las mejores horas para poner la lavadora<span>Con los precios reales del último mes.</span></a></li>
+    <li><a href="/guias/como-leer-factura-luz/">Cómo leer la factura de la luz<span>Cada concepto explicado con un ejemplo real.</span></a></li>
+    <li><a href="/guias/pvpc-o-mercado-libre/">PVPC o mercado libre<span>Cuándo conviene cada uno.</span></a></li>
+    <li><a href="/guias/bajar-potencia-contratada/">Cómo bajar la potencia contratada<span>Coste del cambio y ahorro al año.</span></a></li>
+    <li><a href="/guias/bono-social-electrico/">Bono social eléctrico 2026<span>Descuentos, requisitos y cómo pedirlo.</span></a></li>
   </ul>
 
   <section class="prose">

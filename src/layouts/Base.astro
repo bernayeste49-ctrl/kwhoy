@@ -1,4 +1,5 @@
 ---
+import '@fontsource-variable/archivo/standard.css';
 interface Props {
   title: string;
   description: string;
@@ -10,6 +11,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 const adsClient = import.meta.env.PUBLIC_ADSENSE_CLIENT; // ca-pub-XXXXXXXXXXXXXXXX
 const year = new Date().getFullYear();
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const path = Astro.url.pathname;
+const nav = [
+  ['/', 'Hoy'],
+  ['/precio-luz-manana/', 'Mañana'],
+  ['/calculadoras/', 'Calculadoras'],
+  ['/guias/', 'Guías'],
+  ['/precio-luz/', 'Histórico'],
+];
+const calcPaths = ['/calculadora', '/simulador-factura-luz', '/coste-cargar-coche-electrico'];
+const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadoras/' ? calcPaths.some((c) => path.startsWith(c)) : path.startsWith(href));
 ---
 <!doctype html>
 <html lang="es">
@@ -21,7 +32,7 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#15302a" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="kWhoy" />
@@ -39,99 +50,161 @@ const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
     )}
   </head>
   <body>
+    <a class="skip" href="#contenido">Saltar al contenido</a>
     <header class="site-header">
       <div class="wrap header-inner">
         <a href="/" class="logo" aria-label="kWhoy, inicio">
-          <span class="logo-bolt" aria-hidden="true">⚡</span>kW<span>hoy</span>
+          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#15302a"/><path d="M18.5 4 9 18h6.5l-2 10L23 14h-6.5z" fill="#ffd23f"/></svg>
+          <span>kWhoy</span>
         </a>
         <nav aria-label="Principal">
-          <a href="/">Luz hoy</a>
-          <a href="/precio-luz-manana/">Luz mañana</a>
-          <a href="/calculadoras/">Calculadoras</a>
-          <a href="/guias/">Guías</a>
-          <a href="/precio-luz/">Histórico</a>
+          {nav.map(([href, label]) => <a href={href} aria-current={isActive(href) ? 'page' : undefined}>{label}</a>)}
         </nav>
       </div>
     </header>
-    <main class="wrap">
+    <slot name="hero" />
+    <main class="wrap" id="contenido">
       <slot />
     </main>
     <footer class="site-footer">
-      <div class="wrap">
-        <p><strong>kWhoy</strong> · Precio de la luz por horas con datos oficiales de <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">Red Eléctrica (REE)</a>.</p>
-        <p class="footer-links">
-          <a href="/calculadoras/">Calculadoras</a>
+      <div class="wrap footer-grid">
+        <div class="footer-brand">
+          <a href="/" class="logo logo-sm" aria-label="kWhoy, inicio">
+            <svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#ffd23f"/><path d="M18.5 4 9 18h6.5l-2 10L23 14h-6.5z" fill="#15302a"/></svg>
+            <span>kWhoy</span>
+          </a>
+          <p>El precio de la luz por horas, con datos oficiales de <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">Red Eléctrica</a>, y herramientas para pagar menos.</p>
+        </div>
+        <div>
+          <p class="footer-title">Precios</p>
+          <a href="/">Precio de la luz hoy</a>
+          <a href="/precio-luz-manana/">Precio de la luz mañana</a>
+          <a href="/precio-luz/">Histórico por días y meses</a>
+        </div>
+        <div>
+          <p class="footer-title">Calculadoras</p>
+          <a href="/calculadora-coste-electrodomesticos/">Coste por electrodoméstico</a>
           <a href="/simulador-factura-luz/">Simulador de factura</a>
-          <a href="/coste-cargar-coche-electrico/">Coche eléctrico</a>
+          <a href="/coste-cargar-coche-electrico/">Carga del coche eléctrico</a>
           <a href="/calculadora-potencia-contratada/">Potencia contratada</a>
+        </div>
+        <div>
+          <p class="footer-title">kWhoy</p>
           <a href="/guias/">Guías</a>
-          <a href="/sobre-nosotros/">Sobre kWhoy</a>
+          <a href="/sobre-nosotros/">Quiénes somos</a>
           <a href="/metodologia/">Metodología</a>
           <a href="/contacto/">Contacto</a>
-          <a href="/aviso-legal/">Aviso legal</a>
-          <a href="/privacidad/">Privacidad</a>
-          <a href="/cookies/">Cookies</a>
-        </p>
-        <p class="muted">© {year} kWhoy. La información es orientativa y no sustituye a tu factura ni a la de tu comercializadora.</p>
+        </div>
+      </div>
+      <div class="wrap footer-legal">
+        <span>© {year} kWhoy. Información orientativa: no sustituye a tu factura.</span>
+        <span class="legal-links"><a href="/aviso-legal/">Aviso legal</a><a href="/privacidad/">Privacidad</a><a href="/cookies/">Cookies</a></span>
       </div>
     </footer>
   </body>
 </html>
 
 <style is:global>
+  /*
+    kWhoy: sistema visual
+    Idea: el contador y la tarifa. Tinta verde pino sobre blanco, una franja de 24 horas
+    como pieza protagonista y Archivo expandida para cifras y titulares.
+  */
   :root {
-    --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --line: #e2e8f0;
-    --brand: #f59e0b; --brand-dark: #b45309; --navy: #0f172a;
-    --barata: #16a34a; --media: #f59e0b; --cara: #dc2626;
-    --barata-bg: #dcfce7; --media-bg: #fef3c7; --cara-bg: #fee2e2;
-    --radius: 14px;
+    --paper: #ffffff; --wash: #eef3f1; --ink: #15302a; --muted: #5b6e69; --line: #d8e2df;
+    --volt: #2f5bea; --spark: #ffd23f;
+    --barata: #13915f; --media: #d9941e; --cara: #d2453a;
+    --barata-bg: #e3f4ec; --media-bg: #fbf0dc; --cara-bg: #fbe6e3;
+    --font: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+    --r-lg: 18px; --r-md: 12px; --r-sm: 8px;
   }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
-  a { color: var(--brand-dark); }
-  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
-  .site-header { background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 10; }
-  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; flex-wrap: wrap; }
-  .logo { color: #fff; text-decoration: none; font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; }
-  .logo span { color: var(--brand); }
-  .logo-bolt { margin-right: 4px; }
-  nav { display: flex; gap: 4px; flex-wrap: wrap; }
-  nav a { color: #cbd5e1; text-decoration: none; padding: 6px 10px; border-radius: 8px; font-size: 0.95rem; }
-  nav a:hover { background: #1e293b; color: #fff; }
-  main { padding-top: 24px; padding-bottom: 48px; }
-  h1 { font-size: clamp(1.6rem, 4vw, 2.2rem); line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.02em; }
-  h2 { font-size: 1.35rem; margin: 36px 0 12px; }
-  h3 { font-size: 1.1rem; margin: 24px 0 8px; }
-  .lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 20px; }
-  .muted { color: var(--muted); font-size: 0.9rem; }
-  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
-  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0; }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
-  .stat .k { font-size: 0.85rem; color: var(--muted); }
-  .stat .v { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-  .stat .s { font-size: 0.85rem; color: var(--muted); }
-  .stat.barata { border-color: var(--barata); background: var(--barata-bg); }
-  .stat.cara { border-color: var(--cara); background: var(--cara-bg); }
-  .stat.now { border-color: var(--navy); }
-  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
-  th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
-  th { background: #f1f5f9; font-size: 0.85rem; color: var(--muted); font-weight: 600; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
-  .pill.barata { background: var(--barata-bg); color: #166534; }
-  .pill.media { background: var(--media-bg); color: #92400e; }
-  .pill.cara { background: var(--cara-bg); color: #991b1b; }
-  tr.current td { background: #eef2ff; font-weight: 700; }
-  .notice { background: var(--media-bg); border: 1px solid var(--media); border-radius: var(--radius); padding: 12px 16px; margin: 16px 0; }
-  .btn { display: inline-block; background: var(--navy); color: #fff; text-decoration: none; padding: 10px 16px; border-radius: 10px; font-weight: 600; border: 0; cursor: pointer; font-size: 1rem; }
-  .btn.secondary { background: #fff; color: var(--navy); border: 1px solid var(--line); }
-  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; }
-  .prose p, .prose li { max-width: 72ch; }
-  details { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 8px 0; }
-  summary { font-weight: 600; cursor: pointer; }
-  .site-footer { border-top: 1px solid var(--line); background: #fff; padding: 24px 0; font-size: 0.95rem; }
-  .footer-links { display: flex; flex-wrap: wrap; gap: 14px; }
-  .ad-slot { margin: 24px 0; min-height: 100px; }
-  @media (max-width: 600px) { th, td { padding: 8px; font-size: 0.9rem; } nav a { padding: 6px 8px; font-size: 0.9rem; } }
+  * { box-sizing: border-box; min-width: 0; }
+  html { -webkit-text-size-adjust: 100%; scroll-padding-top: 80px; }
+  body { margin: 0; font-family: var(--font); font-size: 17px; line-height: 1.6; background: var(--paper); color: var(--ink); font-variant-numeric: tabular-nums; overflow-x: clip; }
+  a { color: var(--volt); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--volt); outline-offset: 2px; border-radius: 4px; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: var(--r-sm); z-index: 50; }
+  .skip:focus { left: 8px; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+  .site-header { background: var(--paper); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 800; font-stretch: 125%; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .site-header nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .site-header nav a { color: var(--muted); text-decoration: none; padding: 8px 12px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; white-space: nowrap; }
+  .site-header nav a:hover { color: var(--ink); background: var(--wash); }
+  .site-header nav a[aria-current='page'] { color: var(--ink); background: var(--wash); }
+  @media (max-width: 640px) {
+    .header-inner { flex-direction: column; align-items: stretch; gap: 0; padding-top: 10px; }
+    .site-header { position: static; }
+    .site-header nav { margin: 0 -20px; padding: 6px 14px 10px; }
+  }
+
+  main { padding-top: 32px; padding-bottom: 64px; }
+  h1, h2, h3 { font-stretch: 125%; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
+  h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); font-weight: 800; margin: 0 0 12px; }
+  h2 { font-size: clamp(1.35rem, 2.6vw, 1.75rem); font-weight: 750; margin: 48px 0 14px; }
+  h3 { font-size: 1.15rem; font-weight: 700; margin: 28px 0 8px; }
+  p, li { max-width: 70ch; }
+  .lead { color: var(--muted); font-size: 1.12rem; margin: 0 0 24px; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; }
+  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 20px 0; }
+  .stat { background: var(--wash); border-radius: var(--r-md); padding: 16px 18px; }
+  .stat .k { font-size: 0.88rem; color: var(--muted); font-weight: 600; }
+  .stat .v { font-size: 1.85rem; font-weight: 800; font-stretch: 112%; letter-spacing: -0.02em; line-height: 1.2; margin: 2px 0; }
+  .stat .s { font-size: 0.88rem; color: var(--muted); }
+  .stat .s a { color: inherit; }
+  .stat.barata { background: var(--barata-bg); }
+  .stat.barata .v { color: var(--barata); }
+  .stat.cara { background: var(--cara-bg); }
+  .stat.cara .v { color: var(--cara); }
+  .stat.now { background: var(--ink); color: #fff; }
+  .stat.now .k, .stat.now .s { color: #b9cbc6; }
+  table { width: 100%; font-size: 0.95rem; border: 1px solid var(--line); border-radius: var(--r-lg); border-collapse: separate; border-spacing: 0; overflow: hidden; }
+  th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-size: 0.82rem; color: var(--muted); font-weight: 600; background: var(--wash); }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 650; }
+  .pill.barata { background: var(--barata-bg); color: #0b6a44; }
+  .pill.media { background: var(--media-bg); color: #8a5a0c; }
+  .pill.cara { background: var(--cara-bg); color: #9b2b22; }
+  tr.current td { background: #eaf0ff; font-weight: 700; }
+  .notice { background: var(--media-bg); border-radius: var(--r-md); padding: 14px 18px; margin: 16px 0; }
+  .btn { display: inline-flex; align-items: center; min-height: 44px; background: var(--ink); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 650; border: 0; cursor: pointer; font-size: 0.98rem; }
+  .btn:hover { background: #0e2420; }
+  .btn.secondary { background: var(--paper); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn.secondary:hover { border-color: var(--ink); }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0; }
+  details { border-bottom: 1px solid var(--line); padding: 14px 0; max-width: 760px; }
+  details:first-of-type { border-top: 1px solid var(--line); }
+  summary { font-weight: 650; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 1.3rem; line-height: 1; color: var(--muted); }
+  details[open] summary::after { content: '−'; }
+  details p { margin: 10px 0 0; color: #33463f; }
+  .prose ul, .prose ol { padding-left: 22px; }
+  .prose li { margin: 6px 0; }
+  .ad-slot { margin: 32px 0; min-height: 100px; }
+  .linklist { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); column-gap: 40px; }
+  .linklist li { max-width: none; border-top: 1px solid var(--line); }
+  .linklist a { display: block; padding: 14px 0; color: var(--ink); text-decoration: none; font-weight: 650; }
+  .linklist a:hover { color: var(--volt); }
+  .linklist span { display: block; color: var(--muted); font-weight: 400; font-size: 0.92rem; }
+
+  .site-footer { background: var(--ink); color: #c9d8d4; margin-top: 32px; font-size: 0.95rem; }
+  .site-footer a { color: #e8f0ee; text-decoration: none; }
+  .site-footer a:hover { text-decoration: underline; }
+  .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; padding-top: 48px; padding-bottom: 32px; }
+  .footer-grid > div { display: grid; align-content: start; gap: 8px; }
+  .footer-brand p { margin: 8px 0 0; max-width: 34ch; }
+  .logo-sm { color: #fff; font-size: 1.1rem; }
+  .footer-title { color: #fff; font-weight: 700; margin: 0 0 4px; }
+  .footer-legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 18px; padding-bottom: 28px; border-top: 1px solid #2c4740; font-size: 0.86rem; }
+  .legal-links { display: flex; gap: 16px; }
+  @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { th, td { padding: 9px 10px; font-size: 0.9rem; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>

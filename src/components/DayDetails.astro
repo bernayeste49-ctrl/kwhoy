@@ -1,0 +1,51 @@
+---
+import PriceTable from './PriceTable.astro';
+import { fmtPrice, bestWindow, dayInsights } from '../lib/prices.js';
+interface Props { day: any }
+const { day } = Astro.props;
+const hh = (x) => String(x.hour).padStart(2, '0') + ':00';
+const endh = (x) => String((x.hour + 1) % 24).padStart(2, '0') + ':00';
+const usos = [
+  ['Lavadora o lavavajillas', 'unas 2 horas', bestWindow(day, 2)],
+  ['Secadora o varias coladas', 'unas 3 horas', bestWindow(day, 3)],
+  ['Cargar el coche eléctrico', 'unas 6 horas', bestWindow(day, 6)],
+];
+const insights = dayInsights(day);
+---
+<section class="best">
+  <h2>Cuándo poner los aparatos que más gastan</h2>
+  <ul class="best-list">
+    {usos.map(([que, dur, w]) => (
+      <li>
+        <span class="what">{que}<small>{dur}</small></span>
+        <span class="when">{hh(w.start)}–{endh(w.end)}</span>
+        <span class="avg">{fmtPrice(w.avg)} €/kWh de media</span>
+      </li>
+    ))}
+  </ul>
+  <p class="muted">Franjas más baratas del día completo. Para saber cuánto te cuesta en euros, usa la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+</section>
+
+<section>
+  <h2>Resumen del día</h2>
+  <ul class="insights">{insights.map((t) => <li>{t}</li>)}</ul>
+</section>
+
+<section>
+  <h2>Precio hora a hora</h2>
+  <PriceTable day={day} />
+  <p class="muted">Precio del PVPC (tarifa regulada 2.0TD) publicado por Red Eléctrica, en €/kWh, sin IVA ni impuesto eléctrico. Si tienes una tarifa de mercado libre con precio fijo, tu precio no cambia por horas.</p>
+</section>
+
+<style>
+  .best h2 { margin-top: 8px; }
+  .best-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .best-list li { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); max-width: none; }
+  .what { font-weight: 650; }
+  .what small { display: block; color: var(--muted); font-weight: 400; font-size: 0.88rem; }
+  .when { font-size: 1.7rem; font-weight: 800; font-stretch: 118%; letter-spacing: -0.02em; color: var(--barata); }
+  .avg { color: var(--muted); text-align: right; font-size: 0.92rem; }
+  .insights { padding-left: 20px; }
+  .insights li { margin: 8px 0; }
+  @media (max-width: 600px) { .best-list li { grid-template-columns: 1fr auto; } .avg { grid-column: 1 / -1; text-align: left; margin-top: -8px; } .when { font-size: 1.4rem; } }
+</style>

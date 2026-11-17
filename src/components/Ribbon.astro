@@ -1,0 +1,59 @@
+---
+import { fmtPrice } from '../lib/prices.js';
+interface Props { day: any }
+const { day } = Astro.props;
+const n = day.hours.length;
+const maxP = Math.max(0.05, ...day.hours.map((h) => h.price));
+const minP = Math.min(0, ...day.hours.map((h) => h.price));
+const pct = (v) => ((v - minP) / (maxP - minP)) * 100;
+const zero = pct(0);
+---
+<figure class="ribbon" aria-label={`Precio por horas: de ${fmtPrice(day.min)} a ${fmtPrice(day.max)} €/kWh`}>
+  <div class="bars" style={`--zero:${zero}%`}>
+    {day.hours.map((h) => (
+      <div class={`bar ${h.nivel} p-${h.periodo}`} data-hour={h.hour} title={`${h.label}: ${fmtPrice(h.price)} €/kWh`}>
+        <span class="fill" style={h.price >= 0 ? `bottom:${zero}%;height:${Math.max(1.5, pct(h.price) - zero)}%` : `top:${100 - zero}%;height:${zero - pct(h.price)}%`}></span>
+        <span class="tip">{h.label.slice(0, 5)} · {fmtPrice(h.price)} €</span>
+      </div>
+    ))}
+  </div>
+  <div class="periods" aria-hidden="true">
+    {day.hours.map((h) => <span class={`per ${h.periodo}`}></span>)}
+  </div>
+  <div class="hours" aria-hidden="true">
+    {day.hours.map((h, i) => <span>{i % 3 === 0 ? String(h.hour).padStart(2, '0') : ''}</span>)}
+  </div>
+  <figcaption>
+    <span><i class="sw barata"></i>Barata</span>
+    <span><i class="sw media"></i>Media</span>
+    <span><i class="sw cara"></i>Cara</span>
+    <span class="sep">Franja inferior: periodo <b>valle</b>, <b>llano</b> o <b>punta</b></span>
+  </figcaption>
+</figure>
+<style>
+  .ribbon { margin: 0; }
+  .bars { position: relative; display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; height: 190px; }
+  .bars::after { content: ''; position: absolute; left: 0; right: 0; bottom: var(--zero); border-top: 1px solid rgba(21, 48, 42, 0.25); pointer-events: none; }
+  .bar { position: relative; height: 100%; border-radius: 6px; cursor: default; }
+  .bar:hover { background: rgba(21, 48, 42, 0.06); }
+  .fill { position: absolute; left: 0; right: 0; border-radius: 6px 6px 3px 3px; }
+  .barata .fill { background: var(--barata); }
+  .media .fill { background: var(--media); }
+  .cara .fill { background: var(--cara); }
+  .bar.now { background: rgba(47, 91, 234, 0.12); }
+  .bar.now::before { content: 'Ahora'; position: absolute; top: -24px; left: 50%; transform: translateX(-50%); font-size: 0.72rem; font-weight: 700; color: var(--volt); white-space: nowrap; }
+  .bar.now .fill { outline: 2.5px solid var(--volt); outline-offset: 1px; }
+  .tip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 2; }
+  .bar:hover .tip { display: block; }
+  .periods { display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; margin-top: 6px; }
+  .per { height: 5px; border-radius: 3px; }
+  .per.valle { background: #b9d9cb; }
+  .per.llano { background: #e9cf9c; }
+  .per.punta { background: #e7aaa3; }
+  .hours { display: grid; grid-template-columns: repeat(24, 1fr); gap: 4px; margin-top: 4px; font-size: 0.78rem; color: var(--muted); }
+  figcaption { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 12px; font-size: 0.85rem; color: var(--muted); }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .sw.barata { background: var(--barata); } .sw.media { background: var(--media); } .sw.cara { background: var(--cara); }
+  .sep b { font-weight: 600; }
+  @media (max-width: 600px) { .bars { gap: 2px; height: 150px; } .periods, .hours { gap: 2px; } .fill { border-radius: 3px; } .sep { flex-basis: 100%; } }
+</style>

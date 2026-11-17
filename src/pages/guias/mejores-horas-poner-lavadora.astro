@@ -28,11 +28,11 @@ const updated = p.hasta;
     <figure class="card chart">
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Precio medio de la luz por hora, laborables y fines de semana">
         {[0, maxV / 2, maxV].map((t) => (<g><line x1={left} x2={W - 8} y1={y(t)} y2={y(t)} stroke="#e2e8f0" /><text x={left - 6} y={y(t) + 4} text-anchor="end" font-size="11" fill="#64748b">{t.toLocaleString('es-ES', { maximumFractionDigits: 2 })}</text></g>))}
-        {p.lab.map((v, h) => v !== null && (<rect x={left + h * band + 2} y={y(v)} width={band / 2 - 2} height={H - bottom - y(v)} fill="#0f172a"><title>{`Laborables ${span(h)}: ${fmtPrice(v)} €/kWh`}</title></rect>))}
-        {p.fin.map((v, h) => v !== null && (<rect x={left + h * band + band / 2} y={y(v)} width={band / 2 - 2} height={H - bottom - y(v)} fill="#f59e0b"><title>{`Fines de semana y festivos ${span(h)}: ${fmtPrice(v)} €/kWh`}</title></rect>))}
+        {p.lab.map((v, h) => v !== null && (<rect x={left + h * band + 2} y={y(v)} width={band / 2 - 2} height={H - bottom - y(v)} fill="var(--ink)"><title>{`Laborables ${span(h)}: ${fmtPrice(v)} €/kWh`}</title></rect>))}
+        {p.fin.map((v, h) => v !== null && (<rect x={left + h * band + band / 2} y={y(v)} width={band / 2 - 2} height={H - bottom - y(v)} fill="var(--volt)"><title>{`Fines de semana y festivos ${span(h)}: ${fmtPrice(v)} €/kWh`}</title></rect>))}
         {Array.from({ length: 12 }, (_, i) => i * 2).map((h) => (<text x={left + h * band + band / 2} y={H - 12} text-anchor="middle" font-size="11" fill="#64748b">{hh(h).slice(0, 2)}h</text>))}
       </svg>
-      <figcaption class="muted"><span class="dot" style="background:#0f172a"></span> Laborables · <span class="dot" style="background:#f59e0b"></span> Fines de semana y festivos · Precio medio PVPC en €/kWh, sin impuestos, del {shortDate(p.desde)} al {shortDate(p.hasta)}.</figcaption>
+      <figcaption class="muted"><span class="dot" style="background:var(--ink)"></span> Laborables · <span class="dot" style="background:var(--volt)"></span> Fines de semana y festivos · Precio medio PVPC en €/kWh, sin impuestos, del {shortDate(p.desde)} al {shortDate(p.hasta)}.</figcaption>
     </figure>
 
     <section class="prose">
