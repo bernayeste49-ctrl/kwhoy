@@ -32,7 +32,7 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#15302a" />
+    <meta name="theme-color" content="#0c1f1b" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="kWhoy" />
@@ -54,7 +54,7 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
     <header class="site-header">
       <div class="wrap header-inner">
         <a href="/" class="logo" aria-label="kWhoy, inicio">
-          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#15302a"/><path d="M18.5 4 9 18h6.5l-2 10L23 14h-6.5z" fill="#ffd23f"/></svg>
+          <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#ffd23f"/><path d="M18.5 4 9 18h6.5l-2 10L23 14h-6.5z" fill="#0c1f1b"/></svg>
           <span>kWhoy</span>
         </a>
         <nav aria-label="Principal">
@@ -112,7 +112,8 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
   */
   :root {
     --paper: #ffffff; --wash: #eef3f1; --ink: #15302a; --muted: #5b6e69; --line: #d8e2df;
-    --volt: #2f5bea; --spark: #ffd23f;
+    --volt: #2f5bea; --spark: #ffd23f; --night: #0c1f1b;
+    --n-barata: #2fd08a; --n-media: #ffb547; --n-cara: #ff5a4e;
     --barata: #13915f; --media: #d9941e; --cara: #d2453a;
     --barata-bg: #e3f4ec; --media-bg: #fbf0dc; --cara-bg: #fbe6e3;
     --font: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
@@ -125,22 +126,22 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
   a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--volt); outline-offset: 2px; border-radius: 4px; }
   .skip { position: absolute; left: -999px; top: 8px; background: var(--ink); color: #fff; padding: 8px 12px; border-radius: var(--r-sm); z-index: 50; }
   .skip:focus { left: 8px; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-  .site-header { background: var(--paper); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+  .site-header { background: var(--night); border-bottom: 1px solid #1d3a33; position: sticky; top: 0; z-index: 20; }
   .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
-  .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 800; font-stretch: 125%; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 800; font-stretch: 125%; font-size: 1.3rem; letter-spacing: -0.02em; }
   .site-header nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
-  .site-header nav a { color: var(--muted); text-decoration: none; padding: 8px 12px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; white-space: nowrap; }
-  .site-header nav a:hover { color: var(--ink); background: var(--wash); }
-  .site-header nav a[aria-current='page'] { color: var(--ink); background: var(--wash); }
+  .site-header nav a { color: #9fb8b2; text-decoration: none; padding: 8px 12px; border-radius: 999px; font-weight: 600; font-size: 0.95rem; white-space: nowrap; }
+  .site-header nav a:hover { color: #fff; background: #17332c; }
+  .site-header nav a[aria-current='page'] { color: #fff; background: #1b3d35; }
   @media (max-width: 640px) {
     .header-inner { flex-direction: column; align-items: stretch; gap: 0; padding-top: 10px; }
     .site-header { position: static; }
     .site-header nav { margin: 0 -20px; padding: 6px 14px 10px; }
   }
 
-  main { padding-top: 32px; padding-bottom: 64px; }
+  main.wrap { padding-top: 44px; padding-bottom: 72px; }
   h1, h2, h3 { font-stretch: 125%; letter-spacing: -0.025em; line-height: 1.1; text-wrap: balance; }
   h1 { font-size: clamp(1.9rem, 4.6vw, 3rem); font-weight: 800; margin: 0 0 12px; }
   h2 { font-size: clamp(1.35rem, 2.6vw, 1.75rem); font-weight: 750; margin: 48px 0 14px; }
@@ -194,7 +195,7 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
   .linklist a:hover { color: var(--volt); }
   .linklist span { display: block; color: var(--muted); font-weight: 400; font-size: 0.92rem; }
 
-  .site-footer { background: var(--ink); color: #c9d8d4; margin-top: 32px; font-size: 0.95rem; }
+  .site-footer { background: var(--night); color: #c9d8d4; margin-top: 32px; font-size: 0.95rem; }
   .site-footer a { color: #e8f0ee; text-decoration: none; }
   .site-footer a:hover { text-decoration: underline; }
   .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 28px; padding-top: 48px; padding-bottom: 32px; }
@@ -202,7 +203,7 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
   .footer-brand p { margin: 8px 0 0; max-width: 34ch; }
   .logo-sm { color: #fff; font-size: 1.1rem; }
   .footer-title { color: #fff; font-weight: 700; margin: 0 0 4px; }
-  .footer-legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 18px; padding-bottom: 28px; border-top: 1px solid #2c4740; font-size: 0.86rem; }
+  .footer-legal { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 18px; padding-bottom: 28px; border-top: 1px solid #1d3a33; font-size: 0.86rem; }
   .legal-links { display: flex; gap: 16px; }
   @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
   @media (max-width: 600px) { th, td { padding: 9px 10px; font-size: 0.9rem; } }

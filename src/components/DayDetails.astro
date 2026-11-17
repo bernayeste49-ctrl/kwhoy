@@ -1,5 +1,6 @@
 ---
 import PriceTable from './PriceTable.astro';
+import Ribbon from './Ribbon.astro';
 import { fmtPrice, bestWindow, dayInsights } from '../lib/prices.js';
 interface Props { day: any }
 const { day } = Astro.props;
@@ -12,6 +13,11 @@ const usos = [
 ];
 const insights = dayInsights(day);
 ---
+<section class="chart-sec">
+  <h2>Precio por horas</h2>
+  <Ribbon day={day} />
+</section>
+
 <section class="best">
   <h2>Cuándo poner los aparatos que más gastan</h2>
   <ul class="best-list">
@@ -38,7 +44,7 @@ const insights = dayInsights(day);
 </section>
 
 <style>
-  .best h2 { margin-top: 8px; }
+  .chart-sec h2 { margin-top: 8px; margin-bottom: 36px; }
   .best-list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
   .best-list li { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line); max-width: none; }
   .what { font-weight: 650; }

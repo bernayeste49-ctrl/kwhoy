@@ -1,0 +1,51 @@
+---
+import { fmtPrice } from '../lib/prices.js';
+interface Props { day: any; live?: boolean }
+const { day, live = false } = Astro.props;
+const C = 260, R1 = 196, R2 = 248;
+const prices = day.hours.map((h) => h.price);
+const mn = Math.min(...prices), mx = Math.max(...prices);
+const n = day.hours.length;
+const seg = (i, h) => {
+  const a0 = (i / n) * 2 * Math.PI - Math.PI / 2 + 0.014;
+  const a1 = ((i + 1) / n) * 2 * Math.PI - Math.PI / 2 - 0.014;
+  const r2 = R1 + (R2 - R1) * (0.3 + 0.7 * (mx === mn ? 0.5 : (h.price - mn) / (mx - mn)));
+  const p = (r, a) => `${(C + r * Math.cos(a)).toFixed(1)},${(C + r * Math.sin(a)).toFixed(1)}`;
+  return `M${p(R1, a0)} L${p(r2, a0)} A${r2.toFixed(1)},${r2.toFixed(1)} 0 0 1 ${p(r2, a1)} L${p(R1, a1)} A${R1},${R1} 0 0 0 ${p(R1, a0)}Z`;
+};
+const labels = [0, 3, 6, 9, 12, 15, 18, 21].map((h) => {
+  const a = (h / 24) * 2 * Math.PI - Math.PI / 2;
+  return { h, x: C + 172 * Math.cos(a), y: C + 172 * Math.sin(a) + 5 };
+});
+---
+<div class="dial" data-live={live ? '1' : ''}>
+  <svg viewBox="0 0 520 520" role="img" aria-label={`Reloj de precios por hora: de ${fmtPrice(day.min)} a ${fmtPrice(day.max)} €/kWh`}>
+    <circle cx={C} cy={C} r={R1 - 14} fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1" />
+    {day.hours.map((h, i) => (
+      <path class={`seg ${h.nivel}`} data-hour={h.hour} d={seg(i, h)}><title>{`${h.label}: ${fmtPrice(h.price)} €/kWh`}</title></path>
+    ))}
+    {labels.map((l) => <text x={l.x.toFixed(0)} y={l.y.toFixed(0)} text-anchor="middle" class="lbl">{String(l.h).padStart(2, '0')}</text>)}
+    <line class="needle" id="needle" x1={C} y1={C - 150} x2={C} y2={C - 262} style="display:none" />
+  </svg>
+  <div class="center">
+    <span class="c-k" id="dial-k">Media del día</span>
+    <b class="c-v" id="dial-v">{fmtPrice(day.avg)}</b>
+    <span class="c-u">€/kWh</span>
+  </div>
+</div>
+<style>
+  .dial { position: relative; width: 100%; max-width: 520px; margin-inline: auto; aspect-ratio: 1; }
+  svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .seg { transition: opacity 0.3s; }
+  .seg.barata { fill: var(--n-barata); }
+  .seg.media { fill: var(--n-media); }
+  .seg.cara { fill: var(--n-cara); }
+  .seg.past { opacity: 0.28; }
+  .seg.now { stroke: #fff; stroke-width: 2.5; }
+  .seg:hover { opacity: 1; filter: brightness(1.15); }
+  .lbl { font-size: 14px; fill: #7f9b95; font-family: var(--font); }
+  .needle { stroke: #fff; stroke-width: 3; stroke-linecap: round; }
+  .center { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; pointer-events: none; }
+  .c-k, .c-u { color: #8fa9a3; font-size: 0.95rem; }
+  .c-v { font-size: clamp(2rem, 7vw, 3rem); font-weight: 800; font-stretch: 125%; letter-spacing: -0.03em; color: #fff; line-height: 1.1; }
+</style>
