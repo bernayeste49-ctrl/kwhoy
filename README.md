@@ -40,6 +40,5 @@ npm run build           # genera dist/
 
 ## Pendiente antes de pedir AdSense
 
-- Completar NIF y domicilio en `src/pages/aviso-legal.astro`.
 - Crear el correo `hola@kwhoy.es` (o cambiarlo en contacto, aviso legal y privacidad).
 - Revisar los festivos nacionales de cada año en `src/lib/prices.js`.
