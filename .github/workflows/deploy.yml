@@ -46,6 +46,11 @@ jobs:
           PUBLIC_ADSENSE_CLIENT: ${{ vars.PUBLIC_ADSENSE_CLIENT }}
           PUBLIC_AD_SLOT_HOME: ${{ vars.PUBLIC_AD_SLOT_HOME }}
           PUBLIC_AD_SLOT_CALC: ${{ vars.PUBLIC_AD_SLOT_CALC }}
+      - name: Ajustar enlaces si aún no hay dominio propio
+        run: node scripts/apply-base.mjs
+        env:
+          # Mientras no exista la variable CUSTOM_DOMAIN, la web vive en usuario.github.io/kwhoy/
+          SITE_BASE: ${{ vars.CUSTOM_DOMAIN == '' && format('/{0}', github.event.repository.name) || '' }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

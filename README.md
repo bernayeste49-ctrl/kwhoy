@@ -24,8 +24,9 @@ npm run build           # genera dist/
 2. En el repositorio: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 3. **Settings → Actions → General → Workflow permissions: Read and write**.
 4. La primera ejecución arranca sola al subir el código (o desde **Actions → Run workflow**).
-5. Dominio: en **Settings → Pages → Custom domain** escribe `kwhoy.es` y activa **Enforce HTTPS** cuando esté disponible.
-6. En DonDominio, zona DNS de kwhoy.es:
+5. Mientras no haya dominio, la web se ve en `https://TU_USUARIO.github.io/kwhoy/`.
+6. Dominio: crea la variable de Actions `CUSTOM_DOMAIN` = `kwhoy.es` (Settings → Secrets and variables → Actions → Variables) y, en **Settings → Pages → Custom domain** escribe `kwhoy.es` y activa **Enforce HTTPS** cuando esté disponible.
+7. En DonDominio, zona DNS de kwhoy.es:
    - 4 registros **A** para `@`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
    - 1 registro **CNAME** para `www` → `TU_USUARIO.github.io`
 
