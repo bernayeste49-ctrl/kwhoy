@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { REGULADO } from '../lib/tarifas.js';
+---
+<Base title="Metodología: de dónde salen los datos de kWhoy" description="Fuentes de datos, frecuencia de actualización, fórmulas de cálculo y política de correcciones de kWhoy.">
+  <Breadcrumbs items={[['Metodología']]} />
+  <h1>Metodología</h1>
+  <section class="prose">
+    <p class="lead">Cómo obtenemos, calculamos y revisamos cada dato que publicamos.</p>
+    <h2>Fuente de los precios</h2>
+    <p>Los precios por hora son los del <strong>PVPC (Precio Voluntario para el Pequeño Consumidor)</strong>, peaje 2.0TD, de la península, publicados por Red Eléctrica de España en su <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">API pública de datos</a>. Red Eléctrica publica en €/MWh; nosotros lo convertimos a €/kWh (dividiendo entre 1.000) y lo mostramos sin IVA ni impuesto eléctrico.</p>
+    <h2>Cuándo se actualiza</h2>
+    <ul>
+      <li>Red Eléctrica publica los precios del día siguiente cada tarde, normalmente a partir de las 20:15.</li>
+      <li>Nuestro sistema consulta la API varias veces entre las 20:45 y las 22:30, al cambiar de día y por la mañana, y vuelve a publicar la web en cuanto hay datos nuevos.</li>
+      <li>Las calculadoras, además, descargan los precios en directo desde tu navegador, para que estén al día aunque la página tenga unas horas.</li>
+    </ul>
+    <h2>Cómo calculamos</h2>
+    <ul>
+      <li><strong>Horas baratas, medias y caras:</strong> ordenamos las horas de cada día por precio y las dividimos en tres grupos iguales.</li>
+      <li><strong>Mejores franjas:</strong> buscamos las horas consecutivas con el menor precio medio para la duración indicada.</li>
+      <li><strong>Periodos punta, llano y valle:</strong> calendario oficial del peaje 2.0TD; los fines de semana y los festivos nacionales son valle todo el día.</li>
+      <li><strong>Facturas:</strong> potencia (PVPC: {REGULADO.potenciaPuntaEurKwDia.toLocaleString('es-ES', { maximumFractionDigits: 4 })} €/kW·día en punta y {REGULADO.potenciaValleEurKwDia.toLocaleString('es-ES', { maximumFractionDigits: 4 })} en valle), energía, financiación del bono social, impuesto eléctrico ({(REGULADO.impuestoElectrico * 100).toLocaleString('es-ES', { maximumFractionDigits: 8 })} %), alquiler del contador ({REGULADO.alquilerContadorEurMes.toLocaleString('es-ES')} €/mes) e IVA ({Math.round(REGULADO.iva * 100)} %).</li>
+      <li><strong>Consumos de electrodomésticos:</strong> valores orientativos de aparatos domésticos habituales; el usuario puede cambiarlos por los de su etiqueta.</li>
+    </ul>
+    <h2>Revisión y correcciones</h2>
+    <p>Los valores regulados (peajes, cargos, impuestos) se revisaron por última vez el {new Date(REGULADO.actualizado + 'T12:00:00Z').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })} y se actualizan cuando cambia la normativa. Si detectas un error, escríbenos a hola@kwhoy.es: lo revisamos y, si procede, lo corregimos indicando la fecha de actualización.</p>
+    <h2>Limitaciones</h2>
+    <p>La información es orientativa. Tu factura puede variar según tu comercializadora, los días que cubra y cómo repartas el consumo a lo largo del día. kWhoy no gestiona contratos ni facturas.</p>
+  </section>
+</Base>

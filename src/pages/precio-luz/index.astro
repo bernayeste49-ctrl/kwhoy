@@ -1,22 +1,20 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { availableDates, getDay, longDate, fmtPrice } from '../../lib/prices.js';
-const days = availableDates().map((iso) => getDay(iso));
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { availableMonths, getMonth, monthName, monthSlug, longDate, fmtPrice } from '../../lib/prices.js';
+const months = availableMonths().map((ym) => getMonth(ym));
 ---
-<Base title="Histórico del precio de la luz por días (PVPC) | kWhoy" description="Histórico diario del precio de la luz PVPC: precio medio, hora más barata y más cara de cada día, con datos de Red Eléctrica.">
+<Base title="Histórico del precio de la luz por meses y días (PVPC) | kWhoy" description="Histórico del precio de la luz PVPC: precio medio de cada mes y de cada día, días más baratos y más caros, con datos de Red Eléctrica.">
+  <Breadcrumbs items={[['Histórico']]} />
   <h1>Histórico del precio de la luz</h1>
-  <p class="lead">Precio medio, mínimo y máximo de la tarifa PVPC día a día. Pulsa en una fecha para ver sus precios hora a hora.</p>
-  <table>
-    <thead><tr><th>Día</th><th class="num">Media €/kWh</th><th class="num">Mínimo</th><th class="num">Máximo</th></tr></thead>
-    <tbody>
-      {days.map((d) => (
-        <tr>
-          <td><a href={`/precio-luz/${d.iso}/`}>{longDate(d.iso)}</a></td>
-          <td class="num">{fmtPrice(d.avg)}</td>
-          <td class="num">{fmtPrice(d.min)}</td>
-          <td class="num">{fmtPrice(d.max)}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+  <p class="lead">Precio medio del PVPC por mes y por día. Cada día se añade automáticamente.</p>
+  {months.map((m) => (
+    <section>
+      <h2><a href={`/precio-luz/${monthSlug(m.ym)}/`}>{monthName(m.ym).replace(/^./, (c) => c.toUpperCase())}</a> · media {fmtPrice(m.avg)} €/kWh</h2>
+      <table>
+        <thead><tr><th>Día</th><th class="num">Media €/kWh</th><th class="num">Mínimo</th><th class="num">Máximo</th></tr></thead>
+        <tbody>{[...m.days].reverse().map((d) => (<tr><td><a href={`/precio-luz/${d.iso}/`}>{longDate(d.iso)}</a></td><td class="num">{fmtPrice(d.avg)}</td><td class="num">{fmtPrice(d.min)}</td><td class="num">{fmtPrice(d.max)}</td></tr>))}</tbody>
+      </table>
+    </section>
+  ))}
 </Base>

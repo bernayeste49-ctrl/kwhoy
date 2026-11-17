@@ -19,7 +19,9 @@ const faqs = [
 const jsonLd = [
   { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
   { '@context': 'https://schema.org', '@type': 'WebSite', name: 'kWhoy', url: Astro.site?.href },
+  { '@context': 'https://schema.org', '@type': 'WebPage', name: `Precio de la luz hoy ${shortDate(day.iso)}`, dateModified: new Date().toISOString(), author: { '@type': 'Person', name: 'Bernat Yeste' }, isBasedOn: 'https://www.ree.es/es/apidatos' },
 ];
+const actualizado = new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date());
 ---
 <Base
   title={`Precio de la luz hoy ${shortDate(day.iso)} por horas (PVPC) | kWhoy`}
@@ -27,7 +29,7 @@ const jsonLd = [
   jsonLd={jsonLd}
 >
   <h1>Precio de la luz hoy, {shortDate(day.iso)}, por horas</h1>
-  <p class="lead">Tarifa regulada PVPC para el {longDate(day.iso)}. Datos oficiales de Red Eléctrica, actualizados cada día.</p>
+  <p class="lead">Tarifa regulada PVPC para el {longDate(day.iso)}. Datos oficiales de Red Eléctrica. Última actualización: {actualizado}.</p>
   {!isToday && <div class="notice">Todavía no tenemos los precios de hoy. Te mostramos los últimos disponibles ({longDate(day.iso)}).</div>}
 
   <DayView day={day} live={isToday} />

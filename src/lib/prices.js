@@ -124,3 +124,64 @@ export function hourlyProfile(n = 30) {
     lab: acc.lab.map(mean), fin: acc.fin.map(mean),
   };
 }
+
+const MESES_ = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+export function monthName(ym) { const [y, m] = ym.split('-').map(Number); return `${MESES_[m - 1]} de ${y}`; }
+
+/** Meses con datos, de más reciente a más antiguo: ['2026-11', ...] */
+export function availableMonths() {
+  return [...new Set(availableDates().map((d) => d.slice(0, 7)))];
+}
+
+/** Resumen de un mes */
+export function getMonth(ym) {
+  const days = availableDates().filter((d) => d.startsWith(ym)).sort().map((iso) => getDay(iso));
+  if (!days.length) return null;
+  const avg = days.reduce((s, d) => s + d.avg, 0) / days.length;
+  const byAvg = [...days].sort((a, b) => a.avg - b.avg);
+  const allHours = days.flatMap((d) => d.hours.map((h) => ({ ...h, iso: d.iso })));
+  const minH = allHours.reduce((a, b) => (b.price < a.price ? b : a));
+  const maxH = allHours.reduce((a, b) => (b.price > a.price ? b : a));
+  const negativas = allHours.filter((h) => h.price <= 0).length;
+  return { ym, days, avg, cheapestDay: byAvg[0], priciestDay: byAvg.at(-1), minH, maxH, negativas };
+}
+
+/** Frases de análisis únicas para un día, a partir de sus datos */
+export function dayInsights(day) {
+  const out = [];
+  const pct = (a, b) => ((a - b) / b) * 100;
+  const f1 = (v) => Math.abs(v).toLocaleString('es-ES', { maximumFractionDigits: 1 });
+  const prev30 = availableDates().filter((d) => d < day.iso).slice(0, 30).map((iso) => getDay(iso));
+  if (prev30.length >= 7) {
+    const m = prev30.reduce((s, d) => s + d.avg, 0) / prev30.length;
+    const p = pct(day.avg, m);
+    out.push(Math.abs(p) < 3
+      ? `El precio medio (${fmtPrice(day.avg)} €/kWh) estuvo en línea con la media de los ${prev30.length} días anteriores.`
+      : `El precio medio (${fmtPrice(day.avg)} €/kWh) fue un ${f1(p)} % ${p > 0 ? 'más caro' : 'más barato'} que la media de los ${prev30.length} días anteriores (${fmtPrice(m)} €/kWh).`);
+  }
+  const month = getMonth(day.iso.slice(0, 7));
+  if (month && month.days.length >= 5) {
+    const rank = [...month.days].sort((a, b) => a.avg - b.avg).findIndex((d) => d.iso === day.iso) + 1;
+    const n = month.days.length;
+    if (rank === 1) out.push(`Es el día más barato de ${monthName(month.ym)} hasta ahora.`);
+    else if (rank === n) out.push(`Es el día más caro de ${monthName(month.ym)} hasta ahora.`);
+    else out.push(`Ocupa el puesto ${rank} de ${n} entre los días de ${monthName(month.ym)} ordenados del más barato al más caro.`);
+  }
+  const spread = day.max - day.min;
+  out.push(`Entre la hora más barata (${day.cheapest.label}) y la más cara (${day.priciest.label}) hubo ${fmtPrice(spread)} €/kWh de diferencia${day.min > 0 ? `: la más cara costó ${(day.max / day.min).toLocaleString('es-ES', { maximumFractionDigits: 1 })} veces más` : ''}.`);
+  const neg = day.hours.filter((h) => h.price <= 0);
+  if (neg.length) out.push(`Hubo ${neg.length} ${neg.length === 1 ? 'hora' : 'horas'} con precio cero o negativo (${neg.map((h) => h.label.slice(0, 5)).join(', ')}), algo que ocurre cuando sobra producción renovable.`);
+  const mid = day.hours.filter((h) => h.hour >= 11 && h.hour <= 16);
+  const night = day.hours.filter((h) => h.hour <= 6);
+  const avgOf = (a) => a.reduce((s, h) => s + h.price, 0) / a.length;
+  if (mid.length && night.length) {
+    out.push(avgOf(mid) < avgOf(night)
+      ? 'El mediodía salió más barato que la madrugada, señal de mucha producción solar.'
+      : 'La madrugada fue más barata que el mediodía, el patrón habitual en días con poco sol.');
+  }
+  if (day.findeOFestivo) out.push('Al ser fin de semana o festivo nacional, todas las horas fueron periodo valle para los peajes.');
+  return out;
+}
+
+export function monthSlug(ym) { const [y, m] = ym.split('-').map(Number); return `${MESES_[m - 1]}-${y}`; }
+export function slugToMonth(slug) { const [mes, y] = slug.split('-'); return `${y}-${String(MESES_.indexOf(mes) + 1).padStart(2, '0')}`; }

@@ -2,27 +2,91 @@
 import Base from '../../layouts/Base.astro';
 import DayView from '../../components/DayView.astro';
 import AdSlot from '../../components/AdSlot.astro';
-import { availableDates, getDay, addDays, longDate, shortDate, fmtPrice } from '../../lib/prices.js';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { availableDates, availableMonths, getDay, getMonth, addDays, longDate, shortDate, fmtPrice, monthName, monthSlug, slugToMonth } from '../../lib/prices.js';
 
 export function getStaticPaths() {
-  return availableDates().map((fecha) => ({ params: { fecha } }));
+  return [
+    ...availableDates().map((fecha) => ({ params: { fecha } })),
+    ...availableMonths().map((ym) => ({ params: { fecha: monthSlug(ym) } })),
+  ];
 }
 const { fecha } = Astro.params;
-const day = getDay(fecha);
-const prev = getDay(addDays(fecha, -1));
-const next = getDay(addDays(fecha, 1));
+const isDay = /^\d{4}-\d{2}-\d{2}$/.test(fecha);
+
+let day, prev, next, month, prevMonth, nextMonth, ym;
+if (isDay) {
+  day = getDay(fecha);
+  prev = getDay(addDays(fecha, -1));
+  next = getDay(addDays(fecha, 1));
+  ym = fecha.slice(0, 7);
+} else {
+  ym = slugToMonth(fecha);
+  month = getMonth(ym);
+  const ms = availableMonths();
+  const i = ms.indexOf(ym);
+  nextMonth = ms[i - 1]; prevMonth = ms[i + 1];
+}
+const prevMonthData = !isDay && prevMonth ? getMonth(prevMonth) : null;
+const W = 760, H = 220, left = 40, bottom = 28, top = 10;
+const maxAvg = month ? Math.max(...month.days.map((d) => d.avg)) : 1;
+const band = month ? (W - left - 8) / month.days.length : 1;
+const yy = (v) => top + (1 - v / maxAvg) * (H - top - bottom);
 ---
+{isDay ? (
 <Base
   title={`Precio de la luz el ${shortDate(fecha)} de ${fecha.slice(0, 4)} por horas | kWhoy`}
   description={`Precio de la luz el ${longDate(fecha)}: media de ${fmtPrice(day.avg)} €/kWh, mínimo de ${fmtPrice(day.min)} (${day.cheapest.label}) y máximo de ${fmtPrice(day.max)} (${day.priciest.label}).`}
 >
+  <Breadcrumbs items={[['Histórico', '/precio-luz/'], [monthName(ym), `/precio-luz/${monthSlug(ym)}/`], [shortDate(fecha)]]} />
   <h1>Precio de la luz el {longDate(fecha)}</h1>
   <p class="lead">PVPC hora a hora para ese día, con datos de Red Eléctrica.</p>
   <DayView day={day} />
   <div class="actions">
     {prev && <a class="btn secondary" href={`/precio-luz/${prev.iso}/`}>← {shortDate(prev.iso)}</a>}
-    <a class="btn secondary" href="/precio-luz/">Todo el histórico</a>
+    <a class="btn secondary" href={`/precio-luz/${monthSlug(ym)}/`}>Resumen de {monthName(ym)}</a>
     {next && <a class="btn secondary" href={`/precio-luz/${next.iso}/`}>{shortDate(next.iso)} →</a>}
   </div>
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
 </Base>
+) : (
+<Base
+  title={`Precio de la luz en ${monthName(ym)}: media, días más baratos y más caros | kWhoy`}
+  description={`Precio medio de la luz (PVPC) en ${monthName(ym)}: ${fmtPrice(month.avg)} €/kWh. Día más barato: ${shortDate(month.cheapestDay.iso)}. Día más caro: ${shortDate(month.priciestDay.iso)}.`}
+>
+  <Breadcrumbs items={[['Histórico', '/precio-luz/'], [monthName(ym)]]} />
+  <h1>Precio de la luz en {monthName(ym)}</h1>
+  <p class="lead">
+    El precio medio del PVPC {month.days.length < 28 ? `en los ${month.days.length} días con datos` : 'del mes'} fue de <strong>{fmtPrice(month.avg)} €/kWh</strong> sin impuestos
+    {prevMonthData && <>, un {Math.abs((month.avg - prevMonthData.avg) / prevMonthData.avg * 100).toLocaleString('es-ES', { maximumFractionDigits: 1 })} % {month.avg > prevMonthData.avg ? 'más' : 'menos'} que en {monthName(prevMonth)}</>}.
+  </p>
+  <div class="grid-stats">
+    <div class="stat barata"><div class="k">Día más barato</div><div class="v">{fmtPrice(month.cheapestDay.avg)}</div><div class="s"><a href={`/precio-luz/${month.cheapestDay.iso}/`}>{longDate(month.cheapestDay.iso)}</a></div></div>
+    <div class="stat cara"><div class="k">Día más caro</div><div class="v">{fmtPrice(month.priciestDay.avg)}</div><div class="s"><a href={`/precio-luz/${month.priciestDay.iso}/`}>{longDate(month.priciestDay.iso)}</a></div></div>
+    <div class="stat"><div class="k">Hora más cara del mes</div><div class="v">{fmtPrice(month.maxH.price)}</div><div class="s">{shortDate(month.maxH.iso)}, {month.maxH.label}</div></div>
+    <div class="stat"><div class="k">Horas a precio cero o negativo</div><div class="v">{month.negativas}</div><div class="s">casi siempre a mediodía, con mucha solar</div></div>
+  </div>
+  <figure class="card chart">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Precio medio diario de la luz en ${monthName(ym)}`}>
+      {[0, maxAvg / 2, maxAvg].map((t) => (<g><line x1={left} x2={W - 8} y1={yy(t)} y2={yy(t)} stroke="#e2e8f0" /><text x={left - 6} y={yy(t) + 4} text-anchor="end" font-size="11" fill="#64748b">{t.toLocaleString('es-ES', { maximumFractionDigits: 2 })}</text></g>))}
+      {month.days.map((d, i) => (<a href={`/precio-luz/${d.iso}/`}><rect x={left + i * band + 1} y={yy(d.avg)} width={Math.max(2, band - 2)} height={H - bottom - yy(d.avg)} rx="2" fill={d.iso === month.cheapestDay.iso ? 'var(--barata)' : d.iso === month.priciestDay.iso ? 'var(--cara)' : '#94a3b8'}><title>{`${longDate(d.iso)}: ${fmtPrice(d.avg)} €/kWh`}</title></rect></a>))}
+      {month.days.map((d, i) => (i % 3 === 0) && (<text x={left + i * band + band / 2} y={H - 10} text-anchor="middle" font-size="11" fill="#64748b">{Number(d.iso.slice(8))}</text>))}
+    </svg>
+    <figcaption class="muted">Precio medio de cada día en €/kWh (sin impuestos). Verde: día más barato; rojo: el más caro. Pulsa una barra para ver ese día hora a hora.</figcaption>
+  </figure>
+  <table>
+    <thead><tr><th>Día</th><th class="num">Media €/kWh</th><th class="num">Mínimo</th><th class="num">Máximo</th></tr></thead>
+    <tbody>{[...month.days].reverse().map((d) => (<tr><td><a href={`/precio-luz/${d.iso}/`}>{longDate(d.iso)}</a></td><td class="num">{fmtPrice(d.avg)}</td><td class="num">{fmtPrice(d.min)}</td><td class="num">{fmtPrice(d.max)}</td></tr>))}</tbody>
+  </table>
+  <div class="actions">
+    {prevMonth && <a class="btn secondary" href={`/precio-luz/${monthSlug(prevMonth)}/`}>← {monthName(prevMonth)}</a>}
+    <a class="btn secondary" href="/precio-luz/">Todo el histórico</a>
+    {nextMonth && <a class="btn secondary" href={`/precio-luz/${monthSlug(nextMonth)}/`}>{monthName(nextMonth)} →</a>}
+  </div>
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>
+)}
+<style>
+  .chart { margin: 16px 0; padding: 12px; }
+  svg { width: 100%; height: auto; display: block; }
+</style>

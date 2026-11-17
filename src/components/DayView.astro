@@ -1,12 +1,13 @@
 ---
 import PriceChart from './PriceChart.astro';
 import PriceTable from './PriceTable.astro';
-import { fmtPrice, bestWindow, vsPrevious } from '../lib/prices.js';
+import { fmtPrice, bestWindow, vsPrevious, dayInsights } from '../lib/prices.js';
 interface Props { day: any; live?: boolean }
 const { day, live = false } = Astro.props;
 const w2 = bestWindow(day, 2);
 const w3 = bestWindow(day, 3);
 const diff = vsPrevious(day);
+const insights = dayInsights(day);
 const hh = (x) => String(x.hour).padStart(2, '0') + ':00';
 const endh = (x) => String((x.hour + 1) % 24).padStart(2, '0') + ':00';
 ---
@@ -41,7 +42,10 @@ const endh = (x) => String((x.hour + 1) % 24).padStart(2, '0') + ':00';
     Si vas a poner la lavadora o el lavavajillas (unas 2 horas), lo más barato es de <strong>{hh(w2.start)} a {endh(w2.end)}</strong>{' '}
     ({fmtPrice(w2.avg)} €/kWh de media). Para 3 horas seguidas: de {hh(w3.start)} a {endh(w3.end)}.
   </p>
-  {day.findeOFestivo && <p class="muted">Hoy es fin de semana o festivo nacional: con la tarifa 2.0TD todas las horas son periodo valle para los peajes.</p>}
+  <div class="insights card">
+    <h2>Resumen del día</h2>
+    <ul>{insights.map((t) => <li>{t}</li>)}</ul>
+  </div>
 
   <PriceChart day={day} />
   <PriceTable day={day} />
@@ -70,3 +74,8 @@ const endh = (x) => String((x.hour + 1) % 24).padStart(2, '0') + ':00';
     }
   }
 </script>
+<style>
+  .insights { margin: 16px 0; }
+  .insights h2 { margin: 0 0 8px; font-size: 1.1rem; }
+  .insights ul { margin: 0; padding-left: 20px; }
+</style>

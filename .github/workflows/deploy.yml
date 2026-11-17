@@ -64,3 +64,10 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Avisar a Bing y otros buscadores (IndexNow)
+        if: ${{ vars.CUSTOM_DOMAIN != '' }}
+        continue-on-error: true
+        run: |
+          HOY=$(TZ=Europe/Madrid date +%F)
+          D=https://${{ vars.CUSTOM_DOMAIN }}
+          curl -sS -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json' -d "{\"host\":\"${{ vars.CUSTOM_DOMAIN }}\",\"key\":\"f60cbc1d3bdd3e51e9bac71f68ea0613\",\"keyLocation\":\"$D/f60cbc1d3bdd3e51e9bac71f68ea0613.txt\",\"urlList\":[\"$D/\",\"$D/precio-luz-manana/\",\"$D/precio-luz/$HOY/\"]}" -w '%{http_code}\n'

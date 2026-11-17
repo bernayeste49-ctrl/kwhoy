@@ -5,7 +5,8 @@ import Base from '../layouts/Base.astro';
   <h1>Sobre kWhoy</h1>
   <section class="prose">
     <p>kWhoy nace con una idea sencilla: que cualquiera pueda saber en cinco segundos cuándo le sale más barato encender la lavadora, el horno o cargar el coche, sin anuncios que tapen la información ni letra pequeña.</p>
-    <p>La web la crea y mantiene <strong>Bernat Yeste</strong>, desarrollador web. Todo el código que calcula los precios, las mejores franjas horarias y el coste de cada electrodoméstico está hecho a medida para esta web.</p>
+    <p>La web la crea y mantiene <strong>Bernat Yeste</strong>, desarrollador web de Igualada (Barcelona). Todo el código que descarga los precios, calcula las mejores franjas horarias y estima el coste de cada electrodoméstico está hecho a medida para esta web, y las guías se escriben a partir de fuentes oficiales que citamos en cada artículo.</p>
+    <p>kWhoy es independiente: no pertenece a ninguna comercializadora ni cobra por recomendar tarifas. Se financia con publicidad.</p>
     <h2>De dónde salen los datos</h2>
     <p>Los precios son los del PVPC (tarifa regulada 2.0TD) que publica <a href="https://www.ree.es/es/apidatos" rel="nofollow noopener" target="_blank">Red Eléctrica</a> en su API pública de datos. Se descargan automáticamente varias veces al día. Los mostramos en €/kWh, sin IVA ni impuesto eléctrico.</p>
     <h2>Cómo calculamos</h2>
@@ -14,6 +15,6 @@ import Base from '../layouts/Base.astro';
       <li><strong>Periodos valle, llano y punta:</strong> siguen el calendario del peaje 2.0TD, con fines de semana y festivos nacionales en valle.</li>
       <li><strong>Coste por electrodoméstico:</strong> consumo del aparato (kWh) × precio de cada hora de uso. Los consumos son orientativos y puedes ajustarlos.</li>
     </ul>
-    <p>¿Has visto un error? Escríbenos desde la página de <a href="/contacto/">contacto</a>.</p>
+    <p>Explicamos en detalle de dónde sale cada dato en la página de <a href="/metodologia/">metodología</a>. ¿Has visto un error? Escríbenos desde la página de <a href="/contacto/">contacto</a> y lo corregimos.</p>
   </section>
 </Base>
