@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import DayHero from '../components/DayHero.astro';
+import TelegramCTA from '../components/TelegramCTA.astro';
 import DayDetails from '../components/DayDetails.astro';
 import { weekday } from '../lib/prices.js';
 import AdSlot from '../components/AdSlot.astro';
@@ -18,9 +19,10 @@ const day = getDay(tomorrowIso);
 >
   {day && <DayHero slot="hero" day={day} kicker={longDate(tomorrowIso).replace(/^./, (c) => c.toUpperCase())} title="Precio de la luz mañana por horas" note="Tarifa regulada PVPC publicada por Red Eléctrica. Programa con tiempo la lavadora o la carga del coche." />}
   {day ? (
+    <TelegramCTA />
     <DayDetails day={day} />
   ) : (
-    <><h1>Precio de la luz mañana, {shortDate(tomorrowIso)}</h1><div class="notice">
+    <><h1>Precio de la luz mañana, {shortDate(tomorrowIso)}</h1><TelegramCTA compact /><div class="notice">
       <p><strong>El precio de mañana aún no está publicado.</strong> Red Eléctrica lo publica cada tarde a partir de las 20:15 aproximadamente y esta página se actualiza sola poco después.</p>
       <p><a href="/">Mientras tanto, consulta el precio de la luz de hoy</a></p>
     </div></>

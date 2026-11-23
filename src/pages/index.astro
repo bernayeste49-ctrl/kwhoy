@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import DayHero from '../components/DayHero.astro';
+import TelegramCTA from '../components/TelegramCTA.astro';
 import DayDetails from '../components/DayDetails.astro';
 import AdSlot from '../components/AdSlot.astro';
 import { madridDate, addDays, getDay, availableDates, shortDate, longDate, fmtPrice } from '../lib/prices.js';
@@ -31,6 +32,7 @@ const actualizado = new Intl.DateTimeFormat('es-ES', { timeZone: 'Europe/Madrid'
 >
   <DayHero slot="hero" day={day} live={isToday} kicker={longDate(day.iso).replace(/^./, (c) => c.toUpperCase())} title="Precio de la luz hoy por horas" note={isToday ? `Tarifa regulada PVPC. Datos de Red Eléctrica, actualizados el ${actualizado}.` : `Aún no tenemos los precios de hoy: te mostramos los últimos disponibles.`} />
 
+  <TelegramCTA />
   <DayDetails day={day} />
 
   <div class="actions">

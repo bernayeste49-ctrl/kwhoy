@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
 import AdSlot from '../../components/AdSlot.astro';
@@ -50,5 +51,6 @@ const faqs = [
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
     </section>
   </GuideMeta>
+  <TelegramCTA compact />
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
 </Base>

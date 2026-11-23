@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import { hourlyProfile, shortDate, fmtPrice } from '../../lib/prices.js';
@@ -54,6 +55,7 @@ const updated = p.hasta;
       <p class="muted">Esta página se recalcula sola cada día con los últimos {p.dias} días de precios de Red Eléctrica.</p>
     </section>
   </GuideMeta>
+  <TelegramCTA compact />
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
 </Base>
 <style>
