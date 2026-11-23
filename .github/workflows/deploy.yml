@@ -71,3 +71,26 @@ jobs:
           HOY=$(TZ=Europe/Madrid date +%F)
           D=https://${{ vars.CUSTOM_DOMAIN }}
           curl -sS -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json' -d "{\"host\":\"${{ vars.CUSTOM_DOMAIN }}\",\"key\":\"f60cbc1d3bdd3e51e9bac71f68ea0613\",\"keyLocation\":\"$D/f60cbc1d3bdd3e51e9bac71f68ea0613.txt\",\"urlList\":[\"$D/\",\"$D/precio-luz-manana/\",\"$D/precio-luz/$HOY/\"]}" -w '%{http_code}\n'
+
+  telegram:
+    needs: deploy
+    if: ${{ github.event_name != 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Publicar el precio de mañana en Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT: ${{ vars.TELEGRAM_CHAT }}
+        run: node scripts/telegram-post.mjs
+      - name: Recordar que ya se ha publicado
+        run: |
+          git config user.name "kwhoy-bot"
+          git config user.email "bot@kwhoy.es"
+          git add src/data/telegram.json
+          git diff --cached --quiet || (git commit -m "Telegram $(date -u +%F)" && git push)
