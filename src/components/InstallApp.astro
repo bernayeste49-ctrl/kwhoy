@@ -1,0 +1,55 @@
+---
+// Invita a instalar kWhoy en la pantalla de inicio (solo en móvil y si aún no está instalada)
+---
+<aside id="install-app" class="ia" hidden aria-label="Instalar la app">
+  <img src="/icon-192.png" alt="" width="40" height="40" />
+  <div class="ia-text">
+    <p class="ia-title">Ten kWhoy en tu móvil como una app</p>
+    <p class="ia-sub" id="ia-sub">Ábrela con un toque y mira el precio de la hora sin buscarla.</p>
+  </div>
+  <button type="button" class="ia-btn" id="ia-btn">Instalar</button>
+  <button type="button" class="ia-close" id="ia-close" aria-label="No mostrar más">×</button>
+</aside>
+<script>
+  const box = document.getElementById('install-app') as HTMLElement;
+  const btn = document.getElementById('ia-btn') as HTMLButtonElement;
+  const sub = document.getElementById('ia-sub') as HTMLElement;
+  const KEY = 'kwhoy-install-dismissed';
+  const dismissed = () => { try { return localStorage.getItem(KEY) === '1'; } catch { return false; } };
+  const standalone = matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
+  const mobile = matchMedia('(max-width: 820px)').matches;
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  let deferred: any = null;
+
+  if (!standalone && mobile && !dismissed()) {
+    if (ios) {
+      sub.textContent = 'En Safari, toca Compartir (el cuadrado con la flecha) y luego «Añadir a pantalla de inicio».';
+      btn.hidden = true;
+      box.hidden = false;
+    }
+    addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferred = e; box.hidden = false; });
+  }
+  btn.addEventListener('click', async () => {
+    if (!deferred) return;
+    deferred.prompt();
+    await deferred.userChoice.catch(() => {});
+    deferred = null; box.hidden = true;
+  });
+  document.getElementById('ia-close')!.addEventListener('click', () => {
+    box.hidden = true;
+    try { localStorage.setItem(KEY, '1'); } catch {}
+  });
+  addEventListener('appinstalled', () => { box.hidden = true; });
+</script>
+<style>
+  .ia { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); background: var(--wash); border-radius: 16px; padding: 14px 16px; margin: 0 0 24px; position: relative; }
+  .ia[hidden] { display: none; }
+  .ia img { border-radius: 10px; flex: none; }
+  .ia-text { flex: 1; min-width: 0; padding-right: 20px; }
+  .ia-title { margin: 0; font-weight: 700; }
+  .ia-sub { margin: 2px 0 0; font-size: 0.9rem; color: var(--muted); }
+  .ia-btn { flex: none; background: var(--night); color: #fff; border: 0; font: inherit; font-weight: 700; padding: 9px 16px; border-radius: 999px; cursor: pointer; }
+  .ia-btn[hidden] { display: none; }
+  .ia-close { position: absolute; top: 4px; right: 8px; background: none; border: 0; font-size: 1.4rem; line-height: 1; color: var(--muted); cursor: pointer; padding: 4px; }
+  .ia-btn:focus-visible, .ia-close:focus-visible { outline: 3px solid var(--volt); outline-offset: 2px; }
+</style>

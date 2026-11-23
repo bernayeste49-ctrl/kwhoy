@@ -33,6 +33,9 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0c1f1b" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="kWhoy" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content="kWhoy" />
@@ -103,6 +106,9 @@ const isActive = (href) => (href === '/' ? path === '/' : href === '/calculadora
         <span class="legal-links"><a href="/aviso-legal/">Aviso legal</a><a href="/privacidad/">Privacidad</a><a href="/cookies/">Cookies</a></span>
       </div>
     </footer>
+    <script>
+      if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+    </script>
   </body>
 </html>
 
