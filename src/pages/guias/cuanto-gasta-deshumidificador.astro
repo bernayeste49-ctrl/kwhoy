@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-deshumidificador/';
+const title = 'Cuánto gasta un deshumidificador al día y al mes (compresor o desecante)';
+const description = 'Cuántos kWh gasta un deshumidificador de compresor o desecante, cuánto cuesta al mes con el precio actual de la luz y cuál elegir según la temperatura de tu casa.';
+const faqs = [["¿Cuánto gasta un deshumidificador al mes?", "Uno de compresor de 250 W encendido 8 horas al día gasta como mucho 60 kWh al mes. Uno desecante de unos 500 W, casi el doble. En la práctica gastan menos, porque paran al llegar a la humedad que les fijas."], ["¿Compresor o desecante?", "El de compresor gasta menos y va mejor en casas templadas. El desecante gasta más, pero sigue funcionando bien en habitaciones frías, por debajo de unos 15 °C, donde el de compresor pierde rendimiento."], ["¿Sirve para secar la ropa?", "Sí: en una habitación cerrada acelera mucho el secado de la ropa tendida, y gasta bastante menos que una secadora de condensación."]];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un deshumidificador</h1>
+  <GuideMeta updated={pa.hasta} sources={[["Selectra: cuánto gasta un deshumidificador al mes", "https://selectra.es/energia/noticias/deshumidificador-2026-consumo-mes-luz-humedad"], ["Repsol: cuánto consume un deshumidificador", "https://www.repsol.es/particulares/asesoramiento-consumo/cuanto-consume-deshumidificador/"], ["Red Eléctrica: precios PVPC", "https://www.ree.es/es/apidatos"]]}>
+    <p class="lead">Un deshumidificador doméstico consume <strong>entre 200 y 700 W</strong> según su tipo. Uno de compresor, el más habitual, gasta poco más de 0,2 kWh por hora; uno desecante, más del doble.</p>
+
+    <CosteTabla caption="Coste de un deshumidificador a plena potencia" unidad="Por hora" rows={[
+      { n: 'Compresor pequeño (≈200 W)', kwh: 0.2, mes: 240 },
+      { n: 'Compresor de 20 litros al día (≈250-380 W)', kwh: 0.3, mes: 240 },
+      { n: 'Desecante (≈500 W)', kwh: 0.5, mes: 240 },
+    ]} />
+    <p class="muted">Al mes: 8 horas al día durante 30 días, a plena potencia. Con el higrostato puesto, el aparato para por ciclos y el gasto real es menor.</p>
+
+    <section class="prose">
+      <h2>Cómo gastar menos</h2>
+      <ul>
+        <li><strong>Fija la humedad en 50-60 %.</strong> Bajar de ahí no aporta nada y hace que funcione sin parar.</li>
+        <li><strong>Cierra la habitación.</strong> Si la puerta está abierta, intenta secar toda la casa.</li>
+        <li><strong>Úsalo en las horas baratas</strong> cuando puedas, por ejemplo para secar ropa de noche o el fin de semana. Míralo en el <a href="/">precio de la luz de hoy</a>.</li>
+        <li><strong>Limpia el filtro</strong> cada pocas semanas y no lo pegues a la pared.</li>
+        <li><strong>Ataca la causa.</strong> Ventilar 10 minutos al día, usar la campana al cocinar y no secar ropa en un cuarto cerrado sin deshumidificar reducen la humedad gratis.</li>
+      </ul>
+      <p>Si lo usas para secar ropa, compara con lo que gasta <a href="/guias/cuanto-gasta-secadora/">una secadora</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

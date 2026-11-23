@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-secador-pelo/';
+const title = 'Cuánto gasta un secador de pelo cada vez y al mes';
+const description = 'Cuántos kWh gasta un secador de pelo de 1.600 a 2.400 W, cuánto cuesta secarse el pelo con el precio actual de la luz y cómo gastar menos.';
+const faqs = [["¿Cuánto gasta un secador de pelo?", "Un secador de 2.000 W a máxima temperatura durante 10 minutos gasta 0,33 kWh. Si lo usas cada día, son unos 10 kWh al mes."], ["¿Por qué gasta tanto si se usa tan poco?", "Porque casi toda la potencia va a la resistencia que calienta el aire. Es de los aparatos con más potencia de la casa, aunque al estar encendido pocos minutos el gasto total es moderado."], ["¿Gasta menos la plancha del pelo?", "Sí, mucho menos: una plancha tiene entre 50 y 250 W, frente a los 1.600-2.400 W de un secador."]];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un secador de pelo</h1>
+  <GuideMeta updated={pa.hasta} sources={[["Endesa: consumo de los pequeños electrodomésticos del baño", "https://www.endesa.com/es/blog/blog-de-endesa/luz/cuanta-electricidad-consumen-pequenos-electrodomesticos-del-bano"], ["Tarifa Luz Hora: cuánto cuesta secarse el pelo", "https://tarifaluzhora.es/noticias/secador-pelo-2026-consumo-ano-factura"], ["Red Eléctrica: precios PVPC", "https://www.ree.es/es/apidatos"]]}>
+    <p class="lead">Un secador tiene <strong>entre 1.600 y 2.400 W</strong>, tanto como un calefactor. Pero como se usa pocos minutos, secarse el pelo cada día suma unos 10 kWh al mes.</p>
+
+    <CosteTabla caption="Coste de secarse el pelo" unidad="Por uso" rows={[
+      { n: 'Secador de 2.000 W, 5 minutos', kwh: 0.17, mes: 30 },
+      { n: 'Secador de 2.000 W, 10 minutos', kwh: 0.33, mes: 30 },
+      { n: 'Secador de 2.400 W, 15 minutos (pelo largo)', kwh: 0.6, mes: 30 },
+      { n: 'Plancha de pelo de 60 W, 10 minutos', kwh: 0.01, mes: 30 },
+    ]} />
+    <p class="muted">Al mes: un uso al día durante 30 días, a máxima temperatura.</p>
+
+    <section class="prose">
+      <h2>Cómo gastar menos</h2>
+      <ul>
+        <li><strong>Sécate bien con la toalla antes.</strong> Cuanta menos agua, menos minutos de secador.</li>
+        <li><strong>Usa la temperatura media.</strong> La resistencia es la que gasta; el ventilador apenas consume.</li>
+        <li><strong>Usa la boquilla concentradora</strong> para dirigir el aire y acabar antes.</li>
+        <li><strong>Cuidado con coincidir</strong> con el horno o un calefactor si tienes poca potencia contratada: un secador de 2.000 W ya ocupa más de la mitad de 3,45 kW.</li>
+      </ul>
+      <p>¿Quieres saber lo que te cuestan los demás aparatos? Prueba la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

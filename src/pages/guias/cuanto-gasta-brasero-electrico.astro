@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-brasero-electrico/';
+const title = 'Cuánto gasta un brasero eléctrico de mesa camilla';
+const description = 'Cuántos kWh gasta un brasero eléctrico de 400 a 900 W, cuánto cuesta una tarde con el precio actual de la luz y cuánto ahorras frente a un radiador.';
+const faqs = [["¿Cuánto gasta un brasero eléctrico por hora?", "Lo que marca su potencia: un brasero de 400 W gasta 0,4 kWh por hora y uno de 900 W, 0,9 kWh. Si tiene termostato, gasta algo menos porque se apaga a ratos."], ["¿Brasero o radiador?", "El brasero gasta menos porque solo calienta el espacio bajo la mesa camilla. Si pasas la tarde sentado a la mesa, es más barato; si te mueves por la habitación, necesitas el radiador."], ["¿Es peligroso?", "Los eléctricos actuales llevan rejilla y protección contra sobrecalentamiento. Aun así, no dejes ropa ni la falda de la mesa en contacto directo con él y apágalo al irte."]];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un brasero eléctrico</h1>
+  <GuideMeta updated={pa.hasta} sources={[["Repsol: cuánto consume un brasero eléctrico", "https://www.repsol.es/particulares/asesoramiento-consumo/cuanto-consume-un-brasero-electrico/"], ["Selectra: brasero de mesa camilla o radiador", "https://selectra.es/energia/noticias/brasero-2026-mesa-camilla-radiador-consumo"], ["Red Eléctrica: precios PVPC", "https://www.ree.es/es/apidatos"]]}>
+    <p class="lead">Un brasero eléctrico tiene <strong>entre 400 y 900 W</strong>. Una tarde de 5 horas en la mesa camilla gasta de 2 a 4,5 kWh: menos que un radiador, porque solo calienta las piernas bajo la falda de la mesa.</p>
+
+    <CosteTabla caption="Coste de una tarde con el brasero" unidad="Por tarde" rows={[
+      { n: 'Brasero de 400 W, 5 horas', kwh: 2.0, mes: 20 },
+      { n: 'Brasero de 900 W en nivel bajo (≈450 W), 5 horas', kwh: 2.25, mes: 20 },
+      { n: 'Brasero de 900 W en nivel alto, 5 horas', kwh: 4.5, mes: 20 },
+      { n: 'Comparación: radiador de 1.500 W al 60 %, 5 horas', kwh: 4.5, mes: 20 },
+    ]} />
+    <p class="muted">Al mes: 20 tardes. Precio de punta incluido porque la tarde (de 18:00 a 22:00 los laborables) suele caer en ese periodo.</p>
+
+    <section class="prose">
+      <h2>Cómo sacarle partido</h2>
+      <ul>
+        <li><strong>Usa una falda gruesa</strong> que llegue al suelo: el calor se queda bajo la mesa y puedes usar el nivel bajo.</li>
+        <li><strong>Empieza en alto y baja.</strong> Con 10 minutos a tope y luego el nivel bajo suele bastar.</li>
+        <li><strong>Combínalo con la calefacción baja.</strong> Si estás sentado a la mesa, puedes bajar el termostato de la casa.</li>
+        <li><strong>Ojo con la potencia contratada</strong> si coincide con el horno o la vitro: con 3,45 kW puede saltar el limitador. Compruébalo con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a>.</li>
+      </ul>
+      <p>Para otras formas de calentar la casa, mira <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a> o <a href="/guias/cuanto-gasta-manta-electrica/">la manta eléctrica</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

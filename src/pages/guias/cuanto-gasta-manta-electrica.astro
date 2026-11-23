@@ -1,0 +1,48 @@
+---
+import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-manta-electrica/';
+const title = 'Cuánto gasta una manta eléctrica por noche y al mes';
+const description = 'Cuántos kWh gasta una manta eléctrica o un calientacamas, cuánto cuesta cada noche con el precio actual de la luz y cuánto ahorras frente a un radiador.';
+const faqs = [["¿Cuánto gasta una manta eléctrica toda la noche?", "Una manta de 100 W encendida 8 horas a plena potencia gasta 0,8 kWh. En la práctica gasta menos: casi todas tienen varios niveles y se apagan solas a las pocas horas."], ["¿Gasta más una manta eléctrica o un radiador?", "Mucho más el radiador. Una manta tiene de 60 a 150 W; un radiador de habitación, de 1.000 a 2.000 W. En el tiempo que un radiador de 1.500 W gasta 1 kWh, una manta de 100 W aguanta 15 horas."], ["¿Es seguro dormir con la manta eléctrica encendida?", "Depende del modelo: muchas mantas se apagan solas a las 3 horas y el fabricante indica si se puede dormir con ellas. Nunca la dobles ni la uses húmeda, y revisa el cable antes de cada invierno."]];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta una manta eléctrica</h1>
+  <GuideMeta updated={pa.hasta} sources={[["Repsol: cuánto consume una manta eléctrica", "https://www.repsol.es/particulares/asesoramiento-consumo/cuanto-consume-manta-electrica/"], ["Selectra: consumo de la manta eléctrica frente al radiador", "https://selectra.es/energia/noticias/manta-electrica-2026-consumo-calefaccion"], ["Red Eléctrica: precios PVPC", "https://www.ree.es/es/apidatos"]]}>
+    <p class="lead">Una manta eléctrica consume <strong>entre 60 y 150 W</strong>: es de lo más barato que hay para no pasar frío. Calentar la cama un par de horas cuesta unos pocos céntimos, mucho menos que tener un radiador encendido en el dormitorio.</p>
+
+    <CosteTabla caption="Coste de usar la manta eléctrica" unidad="Por uso" rows={[
+      { n: 'Calientacamas de 60 W, 2 horas', kwh: 0.12, mes: 30 },
+      { n: 'Manta individual de 100 W, 2 horas', kwh: 0.2, mes: 30 },
+      { n: 'Manta doble de 150 W, 2 horas', kwh: 0.3, mes: 30 },
+      { n: 'Manta de 100 W toda la noche a nivel bajo (≈40 W, 8 h)', kwh: 0.32, mes: 30 },
+      { n: 'Comparación: radiador de 1.500 W, 2 horas', kwh: 3.0, mes: 30 },
+    ]} />
+    <p class="muted">Al mes: un uso cada noche durante 30 días.</p>
+
+    <section class="prose">
+      <h2>Cómo calcular lo que gasta la tuya</h2>
+      <p>Mira la potencia en la etiqueta del mando o en la caja (en vatios, W). Divide entre 1.000 y multiplica por las horas: una manta de 120 W durante 2 horas gasta 0,12 × 2 = 0,24 kWh. Si la usas en un nivel más bajo, gasta proporcionalmente menos.</p>
+
+      <h2>La mejor forma de usarla para ahorrar</h2>
+      <ul>
+        <li><strong>Precalienta y apaga.</strong> Enciéndela 20-30 minutos antes de acostarte a nivel alto y bájala o apágala al meterte.</li>
+        <li><strong>Baja la calefacción de noche.</strong> Con la cama caliente puedes dejar el termostato de casa 2 o 3 grados más bajo. Ese es el ahorro grande, mucho más que lo que gasta la manta.</li>
+        <li><strong>En el sofá también.</strong> Una manta o una almohadilla eléctrica para el sofá calienta a quien la usa sin calentar todo el salón.</li>
+      </ul>
+      <p>Si calientas la casa con electricidad, compara opciones en <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>
