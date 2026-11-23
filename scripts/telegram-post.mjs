@@ -77,6 +77,6 @@ const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
   body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true } }),
 });
 const out = await res.json();
-if (!out.ok) throw new Error(`Telegram respondió: ${out.description}`);
+if (!out.ok) { console.log(`::error::Telegram respondió ${out.error_code}: ${out.description}`); process.exit(1); }
 await writeFile(STATE, JSON.stringify({ lastSent: tomorrow }, null, 2) + '\n');
 console.log(`Publicado ${tomorrow} en ${CHAT}.`);
