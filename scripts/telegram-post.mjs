@@ -71,12 +71,19 @@ const text = [
 
 if (DRY) { console.log(text); process.exit(0); }
 
-const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true } }),
-});
-const out = await res.json();
+let out;
+for (let intento = 1; intento <= 4; intento++) {
+  const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'HTML', link_preview_options: { is_disabled: true } }),
+  });
+  out = await res.json();
+  if (out.ok || out.error_code !== 429) break;
+  const espera = (out.parameters?.retry_after ?? 30) + 2;
+  console.log(`Telegram pide esperar ${espera} s (intento ${intento}).`);
+  await new Promise((r) => setTimeout(r, espera * 1000));
+}
 if (!out.ok) { console.log(`::error::Telegram respondió ${out.error_code}: ${out.description}`); process.exit(1); }
 await writeFile(STATE, JSON.stringify({ lastSent: tomorrow }, null, 2) + '\n');
 console.log(`Publicado ${tomorrow} en ${CHAT}.`);
