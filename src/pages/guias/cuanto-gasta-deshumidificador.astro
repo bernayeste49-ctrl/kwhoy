@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -25,6 +26,8 @@ const faqs = [["¿Cuánto gasta un deshumidificador al mes?", "Uno de compresor 
     ]} />
     <p class="muted">Al mes: 8 horas al día durante 30 días, a plena potencia. Con el higrostato puesto, el aparato para por ciclos y el gasto real es menor.</p>
 
+    <PerfilHorario horas={4} aparato="el deshumidificador" />
+
     <section class="prose">
       <h2>Cómo gastar menos</h2>
       <ul>
@@ -35,6 +38,19 @@ const faqs = [["¿Cuánto gasta un deshumidificador al mes?", "Uno de compresor 
         <li><strong>Ataca la causa.</strong> Ventilar 10 minutos al día, usar la campana al cocinar y no secar ropa en un cuarto cerrado sin deshumidificar reducen la humedad gratis.</li>
       </ul>
       <p>Si lo usas para secar ropa, compara con lo que gasta <a href="/guias/cuanto-gasta-secadora/">una secadora</a>.</p>
+
+      <h2>Compresor o desecante: cuál elegir</h2>
+      <p>Los deshumidificadores de <strong>compresor</strong> funcionan como un pequeño aire acondicionado: enfrían el aire para que el agua se condense. Gastan poco (200-400 W) y sacan mucha agua cuando hace calor, pero rinden peor por debajo de unos 15 °C, porque el serpentín se hiela y tiene que descongelarse.</p>
+      <p>Los de <strong>desecante</strong> usan un material que absorbe la humedad y luego lo secan con una resistencia. Gastan más (400-650 W), pero funcionan igual en una habitación fría, y además sueltan aire templado. Para un trastero, un garaje o una casa sin calefacción en invierno, el desecante suele compensar a pesar de gastar más. En una casa calefactada, el de compresor sale más barato.</p>
+
+      <h2>¿Cuánto gasta de verdad?</h2>
+      <p>La tabla de arriba supone que funciona a plena potencia, pero casi ningún deshumidificador lo hace todo el rato. Con el higrostato en 55 %, el aparato para cuando llega a esa humedad y vuelve a arrancar cuando sube. En una habitación cerrada que no sea muy húmeda puede funcionar la mitad del tiempo o menos, y el gasto real queda en la mitad de la tabla. Donde más gasta es en sótanos, casas cerca del mar o cuando se usa para secar ropa.</p>
+
+      <h2>Para secar ropa</h2>
+      <p>Un deshumidificador de compresor en un cuarto pequeño y cerrado con la ropa tendida seca una colada en unas 4-6 horas, con un gasto de alrededor de 1-1,5 kWh. Es parecido a una secadora de bomba de calor y bastante menos que una de condensación clásica. Además, le quita humedad a la casa. Si puedes elegir hora, una colada que se seca de madrugada o un fin de semana cuesta bastante menos.</p>
+
+      <h2>Señales de que lo necesitas</h2>
+      <p>Cristales empañados por la mañana, moho en las esquinas o detrás de los muebles, olor a cerrado o ropa que tarda días en secarse. Un higrómetro barato te dice la humedad real: por encima del 65 % de forma continuada, el deshumidificador ayuda; entre 40 y 60 % no hace falta.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

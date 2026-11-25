@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import AdSlot from '../../components/AdSlot.astro';
@@ -35,6 +36,8 @@ const updated = p.hasta;
       </svg>
       <figcaption class="muted"><span class="dot" style="background:var(--ink)"></span> Laborables · <span class="dot" style="background:var(--volt)"></span> Fines de semana y festivos · Precio medio PVPC en €/kWh, sin impuestos, del {shortDate(p.desde)} al {shortDate(p.hasta)}.</figcaption>
     </figure>
+
+    <PerfilHorario horas={2} aparato="la lavadora" />
 
     <section class="prose">
       <h2>Qué dicen los datos</h2>

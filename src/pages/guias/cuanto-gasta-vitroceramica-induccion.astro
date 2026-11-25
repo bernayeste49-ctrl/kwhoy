@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -33,6 +34,8 @@ const faqs = [
     ]} />
     <p class="muted">Valores orientativos. Hervir 1 litro desde 15 °C requiere 0,1 kWh de calor; el resto son pérdidas, mayores en la vitrocerámica.</p>
 
+    <PerfilHorario horas={1} aparato="la placa de cocina" />
+
     <section class="prose">
       <h2>Por qué la inducción gasta menos</h2>
       <p>La placa de inducción crea un campo magnético que calienta directamente el fondo del recipiente (por eso necesita sartenes y ollas aptas). La vitrocerámica radiante calienta una resistencia bajo el cristal, y ese calor tiene que pasar después a la olla: se pierde más por el camino y además tarda más en enfriarse, aunque eso último lo puedes aprovechar.</p>
@@ -47,6 +50,19 @@ const faqs = [
         <li><strong>Cocina en lotes</strong> y aprovecha las horas baratas cuando puedas. El <a href="/">precio de la luz de hoy</a> te dice cuáles son.</li>
       </ol>
       <p>Si al encender la placa y el horno a la vez salta el limitador, revisa tu <a href="/calculadora-potencia-contratada/">potencia contratada</a>.</p>
+
+      <h2>Inducción, vitrocerámica o gas: cuánto cuesta cocinar</h2>
+      <p>En una placa de inducción, el calor se genera directamente en el fondo de la sartén, así que casi toda la energía acaba en la comida: alrededor del 85-90 %. En una vitrocerámica radiante primero se calienta el cristal y desde ahí la olla, y se pierde más calor por los lados: alrededor del 70-75 %. Con la misma receta, la inducción gasta en torno a un 20-30 % menos.</p>
+      <p>Las placas de gas tienen un rendimiento más bajo todavía, pero el gas por kWh suele ser más barato que la luz. Si ya tienes gas en casa, cambiar a inducción no siempre sale a cuenta solo por el ahorro; sí si vas a quitar el gas del todo y dejas de pagar su término fijo.</p>
+
+      <h2>Un mes de cocina en una casa normal</h2>
+      <p>Una familia que cocina dos comidas al día con una hora de placa en total gasta, con inducción, entre 25 y 35 kWh al mes, y con vitrocerámica algo más. Es un gasto parecido al del frigorífico. La parte que más se puede reducir no es la placa, sino cómo se usa: tapar las ollas, ajustar el fuego al tamaño del recipiente y aprovechar el calor residual al final.</p>
+
+      <h2>La potencia contratada importa</h2>
+      <p>Una placa de inducción de tres o cuatro zonas puede pedir más de 7 kW si se ponen todas a tope con la función "booster". Muchas placas permiten limitar la potencia máxima en el menú de instalación (por ejemplo, a 3,5 o 4,6 kW) precisamente para que no salte el limitador cuando coinciden con el horno o la lavadora. Si te salta a menudo al cocinar, revisa ese ajuste antes de subir la potencia contratada, que encarece la parte fija de la factura todo el año. Puedes calcular lo que necesitas con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a>.</p>
+
+      <h2>¿Influye la hora?</h2>
+      <p>Las comidas caen casi siempre entre las 13:00 y las 15:00, que en días laborables suele ser una franja intermedia, y las cenas entre las 20:00 y las 22:00, que suele ser la más cara del día. Una cena de una hora de placa en la hora más cara puede costar el doble que la misma comida a mediodía, como se ve en el gráfico. Cocinar por la tarde y solo calentar en la cena es una forma sencilla de mover consumo.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

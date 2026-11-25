@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -26,6 +27,8 @@ const faqs = [["¿Cuánto gasta un secador de pelo?", "Un secador de 2.000 W a m
     ]} />
     <p class="muted">Al mes: un uso al día durante 30 días, a máxima temperatura.</p>
 
+    <PerfilHorario horas={1} aparato="el secador de pelo" />
+
     <section class="prose">
       <h2>Cómo gastar menos</h2>
       <ul>
@@ -35,6 +38,19 @@ const faqs = [["¿Cuánto gasta un secador de pelo?", "Un secador de 2.000 W a m
         <li><strong>Cuidado con coincidir</strong> con el horno o un calefactor si tienes poca potencia contratada: un secador de 2.000 W ya ocupa más de la mitad de 3,45 kW.</li>
       </ul>
       <p>¿Quieres saber lo que te cuestan los demás aparatos? Prueba la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Por qué un aparato tan pequeño gasta tanto</h2>
+      <p>El secador es uno de los aparatos con más potencia de la casa: entre 1.800 y 2.400 W, lo mismo que un horno o una vitrocerámica a tope. Lo que lo salva es el tiempo. Diez minutos al día son unos 10 kWh al mes, algo menos que un frigorífico moderno (unos 15-30 kWh), que gasta poco pero no para nunca.</p>
+      <p>Casi toda esa potencia se va en la resistencia que calienta el aire. El motor del ventilador apenas consume unas decenas de vatios. Por eso la posición de aire frío gasta muy poco y la de calor máximo es la que pesa en la factura.</p>
+
+      <h2>Un ejemplo con una familia</h2>
+      <p>En una casa con tres personas que se secan el pelo cada día, una de ellas con pelo largo, la cuenta sería más o menos así: dos usos de 5 minutos y uno de 15 minutos a 2.200 W son unos 0,9 kWh al día, unos 27 kWh al mes. Con la tabla de arriba puedes ver cuánto supone con el precio de estos días. No es de lo que más gasta, pero es más que el router, la tele y los cargadores juntos.</p>
+
+      <h2>¿Importa la hora a la que te secas el pelo?</h2>
+      <p>Algo, pero menos que con otros aparatos, porque la mayoría lo usa al ducharse y la hora no es muy flexible. Si te duchas por la tarde, las horas entre las 18:00 y las 22:00 de los días laborables son las más caras del día. Mover la ducha a mediodía o a primera hora de la mañana abarata tanto el secador como el termo si es eléctrico, que es el que de verdad gasta: calentar el agua de una ducha cuesta mucho más que secarse.</p>
+
+      <h2>Secador iónico, de motor digital o normal</h2>
+      <p>Los secadores con motor digital (sin escobillas) mueven más aire con la misma potencia, así que secan antes y, en la práctica, gastan algo menos por uso. La función "iónica" sirve para el acabado del pelo, no para ahorrar luz. Si vas a cambiar de secador, fíjate en el caudal de aire y en que tenga varias temperaturas, más que en la potencia máxima.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

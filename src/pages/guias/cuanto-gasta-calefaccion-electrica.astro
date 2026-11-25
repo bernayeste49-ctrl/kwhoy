@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -33,6 +34,8 @@ const faqs = [
       { n: 'Bomba de calor dando 2 kW de calor (COP 3,5)', kwh: 0.57, mes: 180 },
     ]} />
     <p class="muted">Al mes: calefactor 4 horas al día; el resto, 6 horas al día durante 30 días. El porcentaje del tiempo encendido depende del aislamiento de la casa y del frío que haga.</p>
+
+    <PerfilHorario horas={4} aparato="la calefacción eléctrica" />
 
     <section class="prose">
       <h2>Por qué la bomba de calor gasta tanto menos</h2>

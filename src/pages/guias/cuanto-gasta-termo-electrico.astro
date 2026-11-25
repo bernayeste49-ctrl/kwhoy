@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -33,6 +34,8 @@ const faqs = [
       { n: 'Pérdidas de un termo de 80 L mantenido a 60-65 °C', kwh: 1.4, mes: 30 },
       { n: 'Calentar un termo de 80 L entero desde frío', kwh: 4.19 },
     ]} />
+
+    <PerfilHorario horas={2} aparato="el termo eléctrico" />
 
     <section class="prose">
       <h2>De dónde salen estas cifras</h2>

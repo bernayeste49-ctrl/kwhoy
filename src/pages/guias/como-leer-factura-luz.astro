@@ -62,6 +62,22 @@ const n4 = (v) => v.toLocaleString('es-ES', { minimumFractionDigits: 4, maximumF
         <li><strong>Lecturas real o estimada:</strong> si pone "estimada", la compañía ha calculado el consumo sin leer el contador; se regulariza en la siguiente factura.</li>
         <li><strong>Comercializadora y distribuidora:</strong> la primera te vende la luz y te factura; la segunda es la dueña de los cables y del contador, y es a quien llamas por una avería.</li>
       </ul>
+          <h2>Ejemplo: una factura de 30 días desglosada</h2>
+      <p>Para una casa con 3,45 kW contratados que consume 250 kWh al mes en el PVPC, el reparto típico de la factura es aproximadamente este:</p>
+      <ul>
+        <li><strong>Potencia:</strong> unos 9 € antes de impuestos. Es fijo: lo pagas aunque no consumas nada.</li>
+        <li><strong>Energía:</strong> depende del precio de cada hora. Con un precio medio de 0,13 €/kWh serían unos 32 €.</li>
+        <li><strong>Bono social, impuesto eléctrico y contador:</strong> alrededor de 3-4 € entre los tres.</li>
+        <li><strong>IVA:</strong> el 21 % de todo lo anterior, unos 9 €.</li>
+      </ul>
+      <p>En total, algo más de 50 €. Fíjate en la proporción: la energía es la parte que puedes controlar con tus hábitos, y la potencia la que puedes reducir una sola vez revisando lo que tienes contratado.</p>
+
+      <h2>Factura estimada o factura real</h2>
+      <p>Con contador inteligente, las facturas se hacen con lecturas reales casi siempre. Si en tu factura pone "lectura estimada", la distribuidora no ha podido leer el contador y ha calculado un consumo aproximado, que se corregirá en una factura posterior. Si ves varias seguidas estimadas, avisa a tu distribuidora: puede que el contador no esté comunicando.</p>
+
+      <h2>Dónde ver el consumo hora a hora</h2>
+      <p>La factura da el total del periodo, pero en la web de tu distribuidora puedes descargar el consumo de cada hora. Cruzarlo con el <a href="/precio-luz/">histórico de precios</a> es la forma más clara de ver en qué horas se te va la factura y qué consumos merece la pena mover.</p>
+
     </section>
   </GuideMeta>
   <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />

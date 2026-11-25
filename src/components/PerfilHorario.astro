@@ -1,0 +1,74 @@
+---
+// Datos propios: precio medio por hora en los últimos 30 días y mejor franja de N horas
+// para un aparato concreto. Se recalcula en cada compilación con los precios de REE.
+import { hourlyProfile, shortDate } from '../lib/prices.js';
+import { REGULADO } from '../lib/tarifas.js';
+interface Props { horas?: number; aparato: string }
+const { horas = 1, aparato } = Astro.props;
+const pr = hourlyProfile(30);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const hh = (h: number) => `${String(h % 24).padStart(2, '0')}:00`;
+const ct = (v: number) => (v * tax * 100).toLocaleString('es-ES', { maximumFractionDigits: 1 });
+
+function best(arr: (number | null)[], n: number) {
+  let b: { start: number; avg: number } | null = null;
+  for (let i = 0; i + n <= 24; i++) {
+    const s = arr.slice(i, i + n);
+    if (s.some((x) => x == null)) continue;
+    const avg = (s as number[]).reduce((a, x) => a + x, 0) / n;
+    if (!b || avg < b.avg) b = { start: i, avg };
+  }
+  return b;
+}
+function worst(arr: (number | null)[], n: number) {
+  let b: { start: number; avg: number } | null = null;
+  for (let i = 0; i + n <= 24; i++) {
+    const s = arr.slice(i, i + n);
+    if (s.some((x) => x == null)) continue;
+    const avg = (s as number[]).reduce((a, x) => a + x, 0) / n;
+    if (!b || avg > b.avg) b = { start: i, avg };
+  }
+  return b;
+}
+const n = Math.max(1, Math.min(8, Math.round(horas)));
+const bLab = best(pr.lab, n);
+const wLab = worst(pr.lab, n);
+const bFin = best(pr.fin, n);
+const ratio = bLab && wLab ? wLab.avg / bLab.avg : null;
+const vals = pr.lab.filter((x): x is number => x != null);
+const max = Math.max(...vals);
+const min = Math.min(...vals);
+---
+<figure class="perfil">
+  <figcaption>
+    <strong>Cuándo sale más barato usar {aparato}</strong>
+    <span class="muted">Precio medio por hora en días laborables, del {shortDate(pr.desde)} al {shortDate(pr.hasta)} ({pr.dias} días), con impuestos.</span>
+  </figcaption>
+  <div class="bars" role="img" aria-label={`Precio medio por hora: mínimo ${ct(min)} céntimos, máximo ${ct(max)} céntimos por kWh`}>
+    {pr.lab.map((v, h) => v == null ? <span class="b" /> : (
+      <span class:list={['b', bLab && h >= bLab.start && h < bLab.start + n && 'best', wLab && h >= wLab.start && h < wLab.start + n && 'worst']}
+        style={`height:${Math.max(8, ((v - min * 0.85) / (max - min * 0.85)) * 100)}%`} title={`${hh(h)}: ${ct(v)} cént./kWh`} />
+    ))}
+  </div>
+  <div class="ejes"><span>00</span><span>06</span><span>12</span><span>18</span><span>23</span></div>
+  {bLab && wLab && (
+    <p>
+      Para un uso de {n === 1 ? '1 hora' : `${n} horas seguidas`}, la franja más barata de los laborables ha sido
+      <strong>de {hh(bLab.start)} a {hh(bLab.start + n)}</strong> ({ct(bLab.avg)} cént./kWh de media) y la más cara,
+      de {hh(wLab.start)} a {hh(wLab.start + n)} ({ct(wLab.avg)} cént./kWh)
+      {ratio && ratio > 1.15 && <>: elegir bien la hora sale <strong>{ratio.toLocaleString('es-ES', { maximumFractionDigits: 1 })} veces más barato</strong></>}.
+      {bFin && <> En fines de semana y festivos la mejor franja ha sido de {hh(bFin.start)} a {hh(bFin.start + n)} ({ct(bFin.avg)} cént./kWh).</>}
+    </p>
+  )}
+  <p class="muted">Es una media: algunos días cambia. Para el día concreto, mira el <a href="/precio-luz-manana/">precio de mañana por horas</a>.</p>
+</figure>
+<style>
+  .perfil { margin: 20px 0; padding: 16px; border: 1px solid var(--line, #dfe3e2); border-radius: 12px; background: var(--card, #fff); }
+  .perfil figcaption { display: grid; gap: 2px; margin-bottom: 12px; }
+  .bars { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; align-items: end; height: 120px; }
+  .b { display: block; background: #c9d4d1; border-radius: 3px 3px 0 0; }
+  .b.best { background: #1f8a5b; }
+  .b.worst { background: #c8432b; }
+  .ejes { display: flex; justify-content: space-between; font-size: 12px; color: #6b7774; margin: 4px 0 10px; }
+  .perfil p { margin: 8px 0 0; }
+</style>

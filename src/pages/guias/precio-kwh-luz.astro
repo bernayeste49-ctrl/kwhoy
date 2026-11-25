@@ -60,6 +60,21 @@ const faqs = [
         <li>El agua caliente de una persona en un día, con termo eléctrico: casi 2 kWh (<a href="/guias/cuanto-gasta-termo-electrico/">detalle</a>).</li>
       </ul>
 
+      <h2>Qué se incluye en el precio del kWh</h2>
+      <p>Cuando se habla del "precio del kWh" se pueden estar diciendo cosas muy distintas, y por eso a veces las cifras no cuadran:</p>
+      <ul>
+        <li><strong>El precio del mercado mayorista</strong> (el que publica el OMIE): solo la energía, sin peajes. Es el que sale en las noticias en €/MWh.</li>
+        <li><strong>El precio PVPC por horas</strong> (el de esta web): energía más peajes y cargos del periodo, sin impuestos. Es el que Red Eléctrica publica cada tarde para el día siguiente.</li>
+        <li><strong>Lo que pagas en la factura:</strong> el anterior más el impuesto eléctrico y el IVA, y además la parte fija por la potencia contratada y el alquiler del contador.</li>
+      </ul>
+      <p>Por eso un día con el mercado a 80 €/MWh (0,08 €/kWh) puede acabar costándote más de 0,15 €/kWh en la factura.</p>
+
+      <h2>Por qué cambia tanto de una hora a otra</h2>
+      <p>El precio de cada hora depende de qué centrales hacen falta para cubrir la demanda. A mediodía, cuando hay mucha producción solar, la energía es barata. Al anochecer, cuando se va el sol y sube el consumo de las casas, entran centrales más caras, como las de gas, y el precio se dispara. A eso se suman los peajes, que son más altos en punta (de 10:00 a 14:00 y de 18:00 a 22:00 los laborables) y mínimos en valle (de 0:00 a 8:00 y todo el fin de semana).</p>
+
+      <h2>Cuánto es un precio "bueno"</h2>
+      <p>No hay una cifra fija, porque depende de la época del año. Lo útil es comparar cada hora con la media de los últimos días. En la portada de kWhoy cada hora aparece en verde, amarillo o rojo según si está en el tercio más barato, intermedio o más caro de ese día.</p>
+
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
     </section>

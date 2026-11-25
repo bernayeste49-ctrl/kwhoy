@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -26,6 +27,8 @@ const faqs = [["¿Cuánto gasta un brasero eléctrico por hora?", "Lo que marca 
     ]} />
     <p class="muted">Al mes: 20 tardes. Precio de punta incluido porque la tarde (de 18:00 a 22:00 los laborables) suele caer en ese periodo.</p>
 
+    <PerfilHorario horas={3} aparato="el brasero" />
+
     <section class="prose">
       <h2>Cómo sacarle partido</h2>
       <ul>
@@ -35,6 +38,23 @@ const faqs = [["¿Cuánto gasta un brasero eléctrico por hora?", "Lo que marca 
         <li><strong>Ojo con la potencia contratada</strong> si coincide con el horno o la vitro: con 3,45 kW puede saltar el limitador. Compruébalo con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a>.</li>
       </ul>
       <p>Para otras formas de calentar la casa, mira <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a> o <a href="/guias/cuanto-gasta-manta-electrica/">la manta eléctrica</a>.</p>
+
+      <h2>Brasero, radiador o bomba de calor: qué compensa</h2>
+      <p>El brasero no calienta la habitación: calienta a quien está sentado a la mesa. Por eso, con una falda gruesa, unos 400-500 W bastan para estar a gusto, mientras que calentar todo un salón con un radiador eléctrico pide 1.500-2.000 W. Si pasas la tarde en la mesa camilla, el brasero gasta menos de la mitad.</p>
+      <p>La comparación cambia si tienes aire acondicionado con bomba de calor. Por cada kWh de luz, una bomba de calor da entre 3 y 4 kWh de calor, así que calentar el salón entero con ella puede costar parecido a usar el brasero, y la casa queda caliente para todos. Lo más eficiente suele ser combinar las dos cosas: la bomba de calor a 19-20 °C y el brasero para la mesa.</p>
+
+      <h2>Tipos de brasero</h2>
+      <ul>
+        <li><strong>De resistencia o cuarzo</strong> (300-900 W): los clásicos. Calientan rápido y suelen tener dos niveles.</li>
+        <li><strong>Halógenos</strong> (800-1.200 W): calientan casi al instante, pero tienen más potencia y gastan más si se dejan en alto.</li>
+        <li><strong>De aceite o de mesa con termostato:</strong> mantienen la temperatura y cortan solos, lo que en la práctica ahorra si te olvidas de bajarlo.</li>
+      </ul>
+
+      <h2>Un ejemplo de invierno</h2>
+      <p>Un brasero de 900 W usado 5 horas por tarde, la mitad del tiempo en alto y la otra mitad en bajo, gasta unos 3,4 kWh por tarde. En un mes de 20 tardes son unos 68 kWh. Si la mayoría de esas horas caen entre las 18:00 y las 22:00 de un día laborable, que es la franja más cara, el mismo uso un sábado por la tarde sale bastante más barato, como se ve en el gráfico de arriba.</p>
+
+      <h2>Seguridad</h2>
+      <p>No lo tapes con ropa dentro de la falda ni lo uses con una alargadera fina: un brasero de 900 W necesita un enchufe en buen estado. Apágalo al levantarte de la mesa y no lo dejes encendido mientras duermes.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

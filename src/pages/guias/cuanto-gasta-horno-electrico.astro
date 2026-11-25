@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -35,6 +36,8 @@ const faqs = [
     ]} />
     <p class="muted">Al mes: horno y freidora 3 veces por semana, microondas 2 veces al día. Valores orientativos: la freidora y el microondas no tienen etiqueta energética oficial.</p>
 
+    <PerfilHorario horas={1} aparato="el horno" />
+
     <section class="prose">
       <h2>Qué dice la etiqueta de tu horno</h2>
       <p>Los hornos eléctricos llevan etiqueta energética europea, con clases de A+++ a D. Lo útil no es la letra, sino las dos cifras de <strong>consumo en kWh por ciclo</strong>: una en modo convencional (calor arriba y abajo) y otra con circulación forzada (ventilador). Ese ciclo es una prueba normalizada que calienta una carga estándar, así que sirve para comparar modelos.</p>
@@ -49,6 +52,20 @@ const faqs = [
         <li><strong>Evita la franja punta si puedes.</strong> Entre semana, de 18:00 a 22:00 la luz suele estar en su precio más alto, justo a la hora de la cena. Míralo en el <a href="/">precio de la luz de hoy</a>.</li>
       </ul>
       <p>Si el horno coincide con la vitro y la lavadora, revisa que tu potencia contratada aguante: la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a> te lo dice.</p>
+
+      <h2>Horno, freidora de aire o microondas</h2>
+      <p>Un horno tiene que calentar una caja de 60-70 litros de aire y metal antes de empezar a cocinar, y luego mantenerla caliente. Por eso gasta alrededor de 1 kWh por hora de uso aunque solo metas una pizza. La freidora de aire calienta un espacio mucho más pequeño y está lista en un par de minutos: para raciones pequeñas gasta la mitad o menos. El microondas calienta directamente el agua de la comida y es, con diferencia, lo más barato para recalentar.</p>
+      <p>La freidora de aire no siempre gana: para una bandeja grande o para cocinar para cuatro personas, hay que hacer varias tandas y el horno vuelve a compensar.</p>
+
+      <h2>Funciones que gastan más o menos</h2>
+      <ul>
+        <li><strong>Aire caliente (ventilador):</strong> reparte mejor el calor y permite bajar 10-20 °C respecto a calor arriba y abajo. Es la opción más eficiente para casi todo.</li>
+        <li><strong>Grill:</strong> usa la resistencia superior a tope; gasta mucho durante poco tiempo.</li>
+        <li><strong>Pirólisis (autolimpieza):</strong> calienta el horno por encima de 400 °C durante una o dos horas y puede gastar entre 2 y 5 kWh por limpieza. Úsala de vez en cuando y, si puedes, en horas valle o en fin de semana.</li>
+      </ul>
+
+      <h2>Un ejemplo de domingo</h2>
+      <p>Un asado de una hora y media con 15 minutos de precalentado gasta alrededor de 1,8 kWh. Si lo haces un domingo, todo el día está en periodo valle y el kWh es más barato. El mismo asado un martes a las 20:00 cuesta bastante más, como muestran el gráfico y la tabla de esta página. Si tienes que hornear entre semana, a mediodía suele salir más barato que por la noche.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

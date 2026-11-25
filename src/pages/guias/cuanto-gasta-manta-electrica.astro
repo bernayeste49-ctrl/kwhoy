@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -27,6 +28,8 @@ const faqs = [["¿Cuánto gasta una manta eléctrica toda la noche?", "Una manta
     ]} />
     <p class="muted">Al mes: un uso cada noche durante 30 días.</p>
 
+    <PerfilHorario horas={2} aparato="la manta eléctrica" />
+
     <section class="prose">
       <h2>Cómo calcular lo que gasta la tuya</h2>
       <p>Mira la potencia en la etiqueta del mando o en la caja (en vatios, W). Divide entre 1.000 y multiplica por las horas: una manta de 120 W durante 2 horas gasta 0,12 × 2 = 0,24 kWh. Si la usas en un nivel más bajo, gasta proporcionalmente menos.</p>
@@ -38,6 +41,23 @@ const faqs = [["¿Cuánto gasta una manta eléctrica toda la noche?", "Una manta
         <li><strong>En el sofá también.</strong> Una manta o una almohadilla eléctrica para el sofá calienta a quien la usa sin calentar todo el salón.</li>
       </ul>
       <p>Si calientas la casa con electricidad, compara opciones en <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a>.</p>
+
+      <h2>Por qué ahorra tanto frente a la calefacción</h2>
+      <p>Una manta eléctrica calienta la cama, no el aire de la habitación. Para eso bastan entre 60 y 150 W, mientras que un radiador que calienta el dormitorio necesita entre 1.000 y 2.000 W. Una hora de radiador gasta lo mismo que entre 10 y 20 horas de manta. Por eso tiene tanto sentido para quien pasa frío al acostarse.</p>
+      <p>El ahorro de verdad no está en la manta, sino en lo que deja de funcionar: si con la cama caliente puedes apagar la calefacción del dormitorio de noche o bajarla de 21 a 17-18 °C, el consumo de la casa baja mucho más de lo que gasta la manta.</p>
+
+      <h2>Tipos</h2>
+      <ul>
+        <li><strong>Calientacamas</strong> (bajo la sábana bajera, 60-100 W): el más económico. Se enciende un rato antes de acostarse.</li>
+        <li><strong>Manta de cubrir</strong> (encima de la sábana, 100-160 W): calienta más y también sirve para el sofá.</li>
+        <li><strong>Dobles con dos mandos:</strong> cada lado con su temperatura. Gastan como dos individuales si se usan los dos lados.</li>
+      </ul>
+
+      <h2>Un ejemplo de un mes de invierno</h2>
+      <p>Un calientacamas de 100 W que se enciende 30 minutos antes de acostarse a tope y luego queda una hora a nivel bajo gasta unos 0,1 kWh por noche: unos 3 kWh al mes. Es menos de lo que gasta un frigorífico en tres o cuatro días. Aunque se usase cada noche de la temporada, el coste total del invierno queda en pocos euros, como se ve en la tabla.</p>
+
+      <h2>Seguridad</h2>
+      <p>No la dobles mientras está encendida, no la uses mojada y revisa que el cable no tenga cortes. Las mantas actuales tienen protección contra el sobrecalentamiento y apagado automático; si la tuya tiene más de 10 años y no lo tiene, conviene cambiarla.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

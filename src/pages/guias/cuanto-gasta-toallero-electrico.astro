@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -36,6 +37,8 @@ const faqs = [
       { n: 'Toallero de 500 W, 24 horas a plena potencia (máximo teórico)', kwh: 12, mes: 30 },
     ]} />
     <p class="muted">Al mes: 30 días. El 50 % del tiempo con termostato es una cifra orientativa: los fabricantes no publican cuántas horas trabaja realmente la resistencia, y depende del tamaño del baño, el aislamiento y la temperatura elegida.</p>
+
+    <PerfilHorario horas={2} aparato="el toallero eléctrico" />
 
     <section class="prose">
       <h2>Qué potencia tiene cada toallero</h2>

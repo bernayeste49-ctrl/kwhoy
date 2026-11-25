@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -34,6 +35,8 @@ const faqs = [
     ]} />
     <p class="muted">Al mes: 3 secados por semana. Los kWh son valores típicos; el de tu modelo está en su etiqueta energética.</p>
 
+    <PerfilHorario horas={2} aparato="la secadora" />
+
     <section class="prose">
       <h2>Cómo leer la etiqueta</h2>
       <p>Desde el 1 de julio de 2025 las secadoras que se venden en la UE llevan una etiqueta nueva, con clases de la A a la G y el consumo expresado en <strong>kWh por cada 100 ciclos</strong>. Si pone 150 kWh/100 ciclos, cada secado de referencia gasta 1,5 kWh. Las etiquetas antiguas (A+++, A++...) daban el consumo de un año de 160 ciclos: divide entre 160.</p>
@@ -47,6 +50,16 @@ const faqs = [
         <li><strong>Tiende cuando puedas.</strong> Secar al aire es gratis; la secadora es para los días que no hay otra opción.</li>
       </ol>
       <p>Para un cálculo con tu aparato y la hora exacta, usa la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Bomba de calor, condensación y evacuación</h2>
+      <p>Las tres secan la ropa con aire caliente, pero lo consiguen de forma muy distinta. Las de <strong>evacuación</strong> calientan aire con una resistencia y lo expulsan por un tubo a la calle: tiran el calor. Las de <strong>condensación</strong> clásicas también usan una resistencia, pero enfrían el aire para recoger el agua en un depósito; siguen gastando mucho. Las de <strong>bomba de calor</strong> funcionan como un pequeño aire acondicionado que recicla el calor dentro de la máquina: secan a menor temperatura y gastan entre la mitad y un tercio.</p>
+      <p>La de bomba de calor tarda algo más por ciclo (2-3 horas frente a 1,5-2) y cuesta más al comprarla, pero el gasto en luz es mucho menor y trata mejor la ropa.</p>
+
+      <h2>¿Compensa cambiar a bomba de calor?</h2>
+      <p>Con 3 secados a la semana, pasar de una de condensación a una de bomba de calor ahorra unos 3 kWh por ciclo: unos 470 kWh al año. Multiplícalo por el precio medio de la tabla y sabrás el ahorro anual con los precios actuales. Si usas la secadora casi a diario, la diferencia se recupera en pocos años; si solo la usas en invierno o de forma ocasional, tarda mucho más.</p>
+
+      <h2>Un truco que casi nadie usa: el inicio diferido</h2>
+      <p>La mayoría de secadoras permiten programar el inicio para dentro de unas horas. Si cargas la secadora al acostarte y la programas para que empiece a las 2:00 o 3:00, o la dejas para el fin de semana, todo el ciclo cae en periodo valle. En una de condensación eso supone casi 4,5 kWh por ciclo a precio de valle en lugar de punta.</p>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}

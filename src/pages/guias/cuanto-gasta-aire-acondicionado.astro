@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
 import TelegramCTA from '../../components/TelegramCTA.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import CosteTabla from '../../components/CosteTabla.astro';
@@ -33,6 +34,8 @@ const faqs = [
       { n: 'Aire acondicionado portátil', kwh: 1.2, mes: 180 },
     ]} />
     <p class="muted">La columna mensual supone 6 horas al día durante 30 días. Los inverter, una vez que la casa está a la temperatura fijada, trabajan bastante por debajo de su potencia máxima, así que el gasto real suele ser menor.</p>
+
+    <PerfilHorario horas={3} aparato="el aire acondicionado" />
 
     <section class="prose">
       <h2>Cómo calcular el consumo de tu aparato</h2>
