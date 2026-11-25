@@ -5,7 +5,7 @@ que encaje con la época del año, escribe la guía y lo marca con [x] y el slug
 Se pueden añadir temas nuevos al final de cada bloque.
 
 ## Invierno (nov-feb)
-- [ ] Cuánto gasta un toallero eléctrico
+- [x] Cuánto gasta un toallero eléctrico (cuanto-gasta-toallero-electrico)
 - [ ] Cuánto gasta la aerotermia en una casa
 - [ ] Cuánto gasta una plancha de ropa (y centro de planchado)
 - [ ] Cuánto gasta una casa al mes de luz (media en España y por tamaño)

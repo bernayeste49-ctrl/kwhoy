@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const path = '/guias/cuanto-gasta-toallero-electrico/';
+const title = 'Cuánto gasta un toallero eléctrico al día y al mes';
+const description = 'Consumo de un toallero eléctrico de 300, 500 o 750 W según las horas que esté encendido, cuánto cuesta con el precio actual de la luz y cómo programarlo para pagar menos.';
+const faqs = [
+  ['¿Cuánto gasta un toallero eléctrico al mes?', 'Depende sobre todo de las horas que esté encendido. Uno de 500 W programado una hora al día gasta unos 15 kWh al mes; el mismo toallero encendido las 24 horas a plena potencia llegaría a 360 kWh, que es el máximo teórico.'],
+  ['¿Es mejor dejar el toallero siempre encendido?', 'No. Aunque el termostato corte la resistencia cuando el baño está caliente, sigue encendiéndose para compensar el calor que se pierde. Programarlo solo para antes de la ducha gasta mucho menos que tenerlo todo el día.'],
+  ['¿Gasta menos un toallero de fluido que uno seco?', 'A igual potencia y con las mismas horas de resistencia encendida, gastan lo mismo por kWh. El de fluido tarda más en calentarse y guarda el calor un rato después de apagarse; el seco se calienta y se enfría antes.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta un toallero eléctrico</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['Selectra: consumo de un toallero eléctrico encendido todo el día', 'https://selectra.es/energia/noticias/toallero-electrico-2026-consumo-encendido-dia'],
+    ['Tarifa Luz Hora: cuánto gasta un toallero eléctrico al mes', 'https://tarifaluzhora.es/noticias/toallero-electrico-2026-consumo-mes-encendido'],
+    ['IDAE: Guía práctica de la energía', 'https://www.idae.es/sites/default/files/documentos/Guia-de-la-energia-idae/Guia_Energia_2007.pdf'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">Los toalleros eléctricos de baño suelen tener <strong>entre 100 y 750 W</strong>, y lo que gastan depende casi solo de las horas que tienen la resistencia encendida. Programado una hora al día, uno de 500 W gasta unos 15 kWh al mes; encendido día y noche puede multiplicar esa cifra por diez o más.</p>
+
+    <CosteTabla caption="Coste de un día de toallero" unidad="Al día" rows={[
+      { n: 'Toallero de 300 W, 1 hora al día', kwh: 0.3, mes: 30 },
+      { n: 'Toallero de 500 W, 1 hora al día (30 min antes de cada ducha)', kwh: 0.5, mes: 30 },
+      { n: 'Toallero de 750 W, 2 horas en modo Boost', kwh: 1.5, mes: 30 },
+      { n: 'Toallero de 500 W, 4 horas al día', kwh: 2, mes: 30 },
+      { n: 'Toallero de 500 W, 24 horas con termostato (≈50 % del tiempo)', kwh: 6, mes: 30 },
+      { n: 'Toallero de 500 W, 24 horas a plena potencia (máximo teórico)', kwh: 12, mes: 30 },
+    ]} />
+    <p class="muted">Al mes: 30 días. El 50 % del tiempo con termostato es una cifra orientativa: los fabricantes no publican cuántas horas trabaja realmente la resistencia, y depende del tamaño del baño, el aislamiento y la temperatura elegida.</p>
+
+    <section class="prose">
+      <h2>Qué potencia tiene cada toallero</h2>
+      <p>Los modelos pequeños, pensados sobre todo para secar toallas, rondan los 100-200 W. Para calentar además el baño, lo habitual son 300, 500 o 750 W, y algunos fabricantes los recomiendan para baños de unos 3, 5 y 7,5 m² respectivamente. Algunos añaden un ventilador de unos 1.000 W para calentar rápido: una hora al día de ventilador suma unos 30 kWh al mes por sí solo. Mira la potencia en la etiqueta o en la ficha del modelo y multiplícala por las horas de uso: 500 W durante 2 horas son 1 kWh.</p>
+
+      <h2>Cómo gastar menos con el toallero</h2>
+      <ul>
+        <li><strong>Prográmalo, no lo dejes encendido.</strong> Encenderlo entre 30 y 60 minutos antes de la ducha y apagarlo después es lo que más reduce el gasto. Si no tiene programador, un enchufe con temporizador hace el mismo trabajo.</li>
+        <li><strong>Termostato a 19-21 °C.</strong> Según el IDAE, cada grado de más sube el consumo de la calefacción en torno a un 7 %.</li>
+        <li><strong>No lo tapes con toallas mojadas</strong> si lo quieres para calentar el baño: el calor se queda en la tela y la resistencia trabaja más rato.</li>
+        <li><strong>Cierra la puerta del baño</strong> mientras se calienta y usa el modo ECO o antihielo si vas a pasar horas fuera.</li>
+        <li><strong>Evita la franja punta si puedes.</strong> Con PVPC, entre semana de 18:00 a 22:00 el kWh suele ser el más caro; en <a href="/guias/horarios-punta-llano-valle/">horarios punta, llano y valle</a> tienes cada franja. Si te duchas de noche, compara con el <a href="/">precio de la luz de hoy</a>.</li>
+      </ul>
+      <p>Si usas el toallero como única calefacción del baño, compáralo con otras opciones en <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a>. Y si coincide con el <a href="/guias/cuanto-gasta-secador-pelo/">secador de pelo</a> y el termo, revisa con la <a href="/calculadora-potencia-contratada/">calculadora de potencia</a> que no te salte el limitador. Para otros aparatos, usa la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>
