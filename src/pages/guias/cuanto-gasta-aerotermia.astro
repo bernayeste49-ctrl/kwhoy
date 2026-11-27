@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+import PerfilHorario from '../../components/PerfilHorario.astro';
+import TelegramCTA from '../../components/TelegramCTA.astro';
+import GuideMeta from '../../components/GuideMeta.astro';
+import CosteTabla from '../../components/CosteTabla.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { periodAverages } from '../../lib/prices.js';
+import { REGULADO } from '../../lib/tarifas.js';
+import { articleLd, faqLd } from '../../lib/seo.js';
+
+const pa = periodAverages(30);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const eur = (kwh: number) => String(Math.round(kwh * pa.media * tax)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const path = '/guias/cuanto-gasta-aerotermia/';
+const title = 'Cuánto gasta la aerotermia en una casa: consumo al día, al mes y al año';
+const description = 'Cuántos kWh gasta una instalación de aerotermia según el tamaño de la vivienda, cómo calcular el consumo de tu casa con el certificado energético, qué potencia necesitas y en qué horas sale más barata.';
+const faqs = [
+  ['¿Cuánto gasta la aerotermia al mes?', 'En invierno, una vivienda de unos 100 m² con calefacción por aerotermia ronda los 400-490 kWh al mes, según las estimaciones de Repsol para unas 6 horas de funcionamiento al día. La cifra real depende sobre todo del clima, del aislamiento y de si los emisores son de baja temperatura.'],
+  ['¿Es mejor dejar la aerotermia encendida todo el día?', 'Para la calefacción, la OCU recomienda programar una temperatura fija (unos 21 °C) y dejar que el equipo la mantenga, en vez de encender y apagar a mano. Lo que sí conviene programar es el calentamiento del depósito de agua caliente, en las horas de luz más barata.'],
+  ['¿Hay que subir la potencia contratada para poner aerotermia?', 'Normalmente sí. Según la OCU, estas bombas de calor necesitan de media de 3 a 4 kW eléctricos, que se suman a lo que ya usas a la vez en casa (horno, lavadora, vitrocerámica).'],
+  ['¿Funciona la aerotermia con los radiadores de toda la vida?', 'Puede funcionar, pero gasta más. Los radiadores convencionales necesitan agua a 55-60 °C, mientras que el suelo radiante trabaja a 30-40 °C. Cuanto más caliente tiene que estar el agua, peor es el rendimiento de la bomba de calor.'],
+];
+---
+<Base title={`${title} | kWhoy`} {description} jsonLd={[articleLd({ title, description, path, updated: pa.hasta }), faqLd(faqs)]}>
+  <h1>Cuánto gasta la aerotermia en una casa</h1>
+  <GuideMeta updated={pa.hasta} sources={[
+    ['OCU: cómo elegir un sistema de aerotermia', 'https://www.ocu.org/vivienda-y-energia/aerotermia/como-elegir'],
+    ['OCU: consejos para usar la aerotermia', 'https://www.ocu.org/vivienda-y-energia/aerotermia/consejos/uso-aerotermia'],
+    ['OCU: cuánto cuesta la bomba de calor para calefacción', 'https://www.ocu.org/fincas-y-casas/gestion/urbanismo-y-construccion/analisis/2022/03/cuanto-cuesta-la-bomba-de-calor-para-calefaccion'],
+    ['Repsol: cuánto consume la aerotermia', 'https://www.repsol.es/particulares/asesoramiento-consumo/cuanto-consume-la-aerotermia/'],
+    ['Decisión 2013/114/UE: bombas de calor como energía renovable (DOUE)', 'https://boe.gob.es/doue/2013/062/L00027-00035.pdf'],
+    ['Red Eléctrica: precios PVPC', 'https://www.ree.es/es/apidatos'],
+  ]}>
+    <p class="lead">La aerotermia es una bomba de calor que saca energía del aire de la calle para calentar el agua de la calefacción y la de la ducha. Por cada kWh de luz que consume entrega de 3 a 4 kWh de calor, según la OCU. Por eso <strong>una casa de unos 100 m² gasta en invierno del orden de 400-490 kWh al mes</strong>, cuando calentarla con radiadores eléctricos costaría varias veces más.</p>
+
+    <CosteTabla caption="Coste de un día de invierno con aerotermia" unidad="Al día" rows={[
+      { n: 'Calefacción, vivienda de 80 m²', kwh: 12.3, mes: 30 },
+      { n: 'Calefacción, vivienda de 100 m²', kwh: 14.7, mes: 30 },
+      { n: 'Calefacción, vivienda de 150 m²', kwh: 16.2, mes: 30 },
+      { n: 'El mismo calor de 100 m² con radiadores eléctricos', kwh: 58.8, mes: 30 },
+      { n: 'Agua caliente de 3 personas con aerotermia (COP 3)', kwh: 1.83, mes: 30 },
+    ]} />
+    <p class="muted">Calefacción: punto medio de las horquillas mensuales que publica Repsol, que suponen unas 6 horas de funcionamiento al día y un rendimiento estacional (SCOP) de 4. Los radiadores eléctricos dan 1 kWh de calor por kWh consumido, así que necesitan cuatro veces más. Agua caliente: los 5,5 kWh de calor al día de una familia de 3 de nuestra <a href="/guias/cuanto-gasta-termo-electrico/">guía del termo</a>, divididos entre un COP de 3, el extremo bajo de lo que indica la OCU.</p>
+
+    <PerfilHorario horas={3} aparato="la aerotermia" />
+    <p class="muted">El gráfico sirve sobre todo para el agua caliente: el depósito se puede programar para que caliente en una franja de 2-3 horas. La calefacción conviene dejarla con una temperatura estable.</p>
+
+    <section class="prose">
+      <h2>Por qué gasta menos que un radiador eléctrico</h2>
+      <p>Un radiador o un calefactor convierten la electricidad en calor en una resistencia: 1 kWh de luz, 1 kWh de calor. Una bomba de calor hace otra cosa: usa la electricidad para mover un gas refrigerante que capta calor del aire exterior, incluso con frío, y lo cede al agua de la casa. La relación entre el calor que entrega y la luz que gasta es el <strong>COP</strong>. La OCU lo sitúa de media entre 3 y 4, y explica que puede oscilar entre 2 y 6 según la diferencia de temperatura entre fuera y dentro.</p>
+      <p>Esa última parte es la clave del consumo: cuanto más frío hace en la calle y más caliente tiene que salir el agua, más trabaja el compresor por cada kWh de calor. Por eso la misma máquina gasta menos en la costa que en la meseta, y menos con suelo radiante que con radiadores antiguos. En la ficha del equipo verás el <strong>SCOP</strong>, que es el rendimiento medio de toda la temporada y la cifra útil para estimar la factura. La normativa europea solo cuenta como energía renovable el calor de las bombas de calor que superan un rendimiento estacional mínimo, de alrededor de 2,5 en las eléctricas.</p>
+
+      <h2>Tipos de aerotermia y qué cambia en el consumo</h2>
+      <ul>
+        <li><strong>Aire-agua.</strong> Es lo que se suele llamar aerotermia: calienta el agua de los emisores (suelo radiante, radiadores o fancoils) y casi siempre también un depósito de agua caliente sanitaria, del tamaño aproximado de un frigorífico combi según la OCU. Puede ser monobloc (todo el circuito de refrigerante en la unidad de fuera) o partida (bibloc), con una unidad hidráulica dentro de casa.</li>
+        <li><strong>Aire-aire.</strong> Es el aire acondicionado con bomba de calor de toda la vida: calienta el aire directamente y no da agua caliente. Su consumo lo tienes en <a href="/guias/cuanto-gasta-aire-acondicionado/">cuánto gasta el aire acondicionado</a>.</li>
+        <li><strong>Bomba de calor solo para agua caliente.</strong> Un depósito con su pequeña bomba de calor integrada, que sustituye a un termo eléctrico o a un calentador de gas. No da calefacción.</li>
+      </ul>
+      <p>Dentro de la aire-agua, lo que más mueve el consumo es la temperatura del agua de impulsión. Según Repsol, el suelo radiante trabaja a 30-40 °C, los radiadores de baja temperatura a 35-45 °C, los fancoils en torno a 45 °C y los radiadores convencionales necesitan 55-60 °C. Con estos últimos la máquina funciona, pero con un rendimiento claramente peor. La OCU advierte de que, al poner aerotermia en una casa con radiadores, puede hacer falta cambiarlos por otros más grandes o de baja temperatura.</p>
+
+      <h2>Ejemplo: calcula el consumo de tu casa con el certificado energético</h2>
+      <p>Las tablas genéricas sirven para hacerse una idea, pero tu casa tiene un dato propio mejor: el <strong>certificado de eficiencia energética</strong>, que es obligatorio al vender o alquilar e indica la demanda de calefacción en kWh por metro cuadrado y año. Esa demanda es el calor que necesita la vivienda, con independencia del aparato que lo produzca.</p>
+      <p>Supón un piso de 90 m² cuyo certificado marca una demanda de calefacción de 70 kWh/m² al año (es un ejemplo; usa la cifra de tu certificado):</p>
+      <ol>
+        <li>Calor necesario: 90 × 70 = <strong>6.300 kWh al año</strong>.</li>
+        <li>Con una aerotermia de SCOP 3,5: 6.300 ÷ 3,5 = <strong>1.800 kWh de luz al año</strong>. Con el precio medio del PVPC del último mes, impuestos incluidos, son unos {eur(1800)} € al año en energía.</li>
+        <li>Con radiadores eléctricos (rendimiento 1): los 6.300 kWh completos, unos {eur(6300)} € al año.</li>
+      </ol>
+      <p>Si en casa usáis también la aerotermia para el agua caliente, suma lo de la tabla de arriba. Y recuerda que el calor no se reparte igual en todo el año: la mayor parte se concentra entre diciembre y febrero, así que esos meses la factura sube bastante por encima de la media.</p>
+
+      <h2>La potencia contratada: el coste que se olvida</h2>
+      <p>Según la OCU, una bomba de calor aire-agua de vivienda necesita de media de 3 a 4 kW eléctricos, y los equipos más grandes pueden llegar a mucho más. Esa potencia se suma a la que ya usas a la vez: si sueles tener 5 kW entre horno, lavadora y vitrocerámica, con la aerotermia funcionando necesitarás bastante más para que no salte el limitador. Muchos equipos tienen además resistencias eléctricas de apoyo que entran solo en los días más fríos, y que en ese momento consumen como un radiador.</p>
+      <p>Subir la potencia encarece la parte fija de la factura todos los meses, también en verano. Antes de pedir el cambio, comprueba qué necesitas con la <a href="/calculadora-potencia-contratada/">calculadora de potencia contratada</a> y lee <a href="/guias/bajar-potencia-contratada/">cómo cambiar la potencia</a>, porque el cambio tiene un coste y no se puede hacer en cualquier momento.</p>
+
+      <h2>Errores habituales que disparan el consumo</h2>
+      <ul>
+        <li><strong>Subir el termostato de golpe.</strong> La OCU calcula que cada grado de más aumenta el consumo en torno a un 7 %. Con 21 °C en invierno es suficiente.</li>
+        <li><strong>Apagarla del todo en la segunda residencia.</strong> El equipo tiene que seguir conectado a la luz para que funcione la protección antihielo; si se congela el circuito, la avería sale mucho más cara que el consumo en espera.</li>
+        <li><strong>Un equipo demasiado grande.</strong> Una máquina sobredimensionada arranca y para continuamente, y pierde rendimiento. El tamaño lo debe fijar un estudio técnico de la vivienda, no la superficie a ojo.</li>
+        <li><strong>Olvidar el mantenimiento.</strong> La OCU recomienda limpiar los intercambiadores al menos una vez al año y vigilar que la presión del agua del circuito sea la indicada (por ejemplo, 1,5 bar). Repsol estima que un equipo mal mantenido puede gastar un 10-20 % más.</li>
+        <li><strong>Calentar el agua de la ducha más de lo necesario.</strong> Cuanto más caliente se pide el depósito, peor rinde la bomba. Muchos equipos traen un ciclo antilegionela que sube el depósito a 60 °C o más de forma periódica; déjalo activado y ajusta el resto del tiempo a la temperatura que recomiende el fabricante.</li>
+      </ul>
+
+      <h2>Cómo gastar menos y en qué horas</h2>
+      <p>Con la calefacción, lo eficiente es la temperatura estable: programar una consigna fija y dejar que el equipo la mantenga, como recomienda la OCU, en lugar de encender y apagar según el precio de cada hora. Una casa calentada por suelo radiante tarda horas en responder, así que perseguir la hora barata no compensa.</p>
+      <p>El agua caliente es otra historia. El depósito guarda el calor, así que puedes elegir cuándo se calienta. Hay dos momentos buenos: la madrugada, que es periodo valle todos los días, y las horas centrales de los días soleados, cuando el PVPC suele bajar mucho y además fuera hace menos frío, lo que mejora el rendimiento de la máquina. El gráfico de arriba muestra cuál de las dos franjas ha salido más barata en el último mes; para el día concreto, mira el <a href="/precio-luz-manana/">precio de la luz de mañana</a>.</p>
+      <p>Por último, aislar puertas y ventanas reduce la demanda de calor de la casa: según la OCU, hasta un 15 % del consumo de calefacción. Si estás comparando con otros sistemas, tienes los radiadores, calefactores y emisores en <a href="/guias/cuanto-gasta-calefaccion-electrica/">cuánto gasta la calefacción eléctrica</a>, y cualquier otro aparato en la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Preguntas frecuentes</h2>
+      {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
+    </section>
+  </GuideMeta>
+  <TelegramCTA compact />
+  <AdSlot slot={import.meta.env.PUBLIC_AD_SLOT_HOME} />
+</Base>

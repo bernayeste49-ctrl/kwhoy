@@ -6,7 +6,7 @@ Se pueden añadir temas nuevos al final de cada bloque.
 
 ## Invierno (nov-feb)
 - [x] Cuánto gasta un toallero eléctrico (cuanto-gasta-toallero-electrico)
-- [ ] Cuánto gasta la aerotermia en una casa
+- [x] Cuánto gasta la aerotermia en una casa (cuanto-gasta-aerotermia)
 - [ ] Cuánto gasta una plancha de ropa (y centro de planchado)
 - [ ] Cuánto gasta una casa al mes de luz (media en España y por tamaño)
 - [ ] Cómo ahorrar luz en invierno (resumen enlazando las guías de calefacción)

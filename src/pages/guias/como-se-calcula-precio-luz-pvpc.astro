@@ -3,10 +3,15 @@ import Base from '../../layouts/Base.astro';
 import GuideMeta from '../../components/GuideMeta.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import { periodAverages, getMonth, availableMonths, monthName, fmtPrice } from '../../lib/prices.js';
+import { REGULADO } from '../../lib/tarifas.js';
 import { articleLd, faqLd } from '../../lib/seo.js';
 
 const pa = periodAverages(30);
 const mes = getMonth(availableMonths()[0]);
+const tax = (1 + REGULADO.impuestoElectrico) * (1 + REGULADO.iva);
+const eur2 = (v: number) => v.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const ejValle = 2 * pa.valle * tax;
+const ejPunta = 2 * pa.punta * tax;
 const path = '/guias/como-se-calcula-precio-luz-pvpc/';
 const title = 'Cómo se calcula el precio de la luz PVPC y por qué cambia cada hora';
 const description = 'Qué componentes forman el precio de la luz PVPC en 2026 (mercado diario, futuros, peajes y cargos), quién lo publica, a qué hora sale el de mañana y por qué varía tanto.';
@@ -22,6 +27,8 @@ const faqs = [
     ['Red Eléctrica: API de datos del mercado (precio PVPC)', 'https://www.ree.es/es/apidatos'],
     ['OCU: evolución del precio de la luz y peso de los futuros en el PVPC', 'https://www.ocu.org/vivienda-y-energia/gas-luz/informe/precio-luz'],
     ['Selectra: componentes del precio de la electricidad', 'https://selectra.es/energia/semaforo-selectra/componentes-precio-luz'],
+    ['OCU: el precio de la electricidad pasa a fijarse cada 15 minutos', 'https://www.ocu.org/vivienda-y-energia/gas-luz/noticias/precio-electricidad-cuarto-hora'],
+    ['Fundación Renovables: claves de la factura cuartohoraria', 'https://fundacionrenovables.org/en/key-points-of-the-new-quarter-hourly-electricity-bill/'],
     ['MITECO: peajes y cargos', 'https://www.miteco.gob.es/es/energia/energia-electrica/electricidad/peajes.html'],
   ]}>
     <p class="lead">El PVPC es la tarifa regulada de la luz. Su precio cambia cada hora porque suma dos cosas que también cambian: <strong>el coste de la energía</strong>, que sale de los mercados, y <strong>los peajes y cargos</strong>, que dependen de si la hora es punta, llano o valle.</p>
@@ -50,6 +57,28 @@ const faqs = [
 
       <h2>Quién puede tener el PVPC</h2>
       <p>Cualquier vivienda o pequeño negocio con hasta 10 kW de potencia contratada, a través de una comercializadora de referencia. Es además la tarifa necesaria para pedir el <a href="/guias/bono-social-electrico/">bono social</a>. Si dudas entre esta y una tarifa fija, mira <a href="/guias/pvpc-o-mercado-libre/">PVPC o mercado libre</a>.</p>
+
+      <h2>El calendario de cada día: de la subasta a tu pantalla</h2>
+      <p>El precio de mañana no se decide de golpe. Cada día, a primera hora de la tarde, OMIE (el operador del mercado eléctrico ibérico) cierra la subasta del mercado diario: los productores ofrecen su energía para cada tramo del día siguiente y los compradores pujan por ella. La última oferta que hace falta para cubrir la demanda de cada tramo marca el precio de todas las demás.</p>
+      <p>Desde el 1 de octubre de 2025 esa subasta ya no fija 24 precios, sino <strong>96, uno por cada 15 minutos</strong>. Para quien tiene el PVPC, en la práctica no cambia nada: los contadores registran el consumo hora a hora y la tarifa regulada sigue cobrando un precio por hora, que es la media de sus cuatro cuartos. Por eso en kWhoy, como en la factura, ves 24 precios al día.</p>
+      <p>Con el resultado del mercado, Red Eléctrica suma los peajes, los cargos y el resto de costes y publica el PVPC de cada hora del día siguiente en su sistema e·sios, normalmente hacia las 20:15. Ese es el precio que recogemos y mostramos en <a href="/precio-luz-manana/">el precio de la luz de mañana</a>. La parte que viene de los futuros ya se conoce de antemano y cambia poco de un día a otro: lo que mueve el precio hora a hora es el mercado diario y el periodo tarifario.</p>
+
+      <h2>Un ejemplo con números: lo mismo, a horas distintas</h2>
+      <p>El precio que publica Red Eléctrica no lleva impuestos. Para saber lo que pagas por cada kWh hay que añadir el impuesto eléctrico ({(REGULADO.impuestoElectrico * 100).toLocaleString('es-ES', { maximumFractionDigits: 2 })} %) y, sobre el resultado, el IVA ({Math.round(REGULADO.iva * 100)} %). En conjunto, el precio se multiplica por {tax.toLocaleString('es-ES', { maximumFractionDigits: 3 })}.</p>
+      <p>Imagina un aparato que gasta 2 kWh en cada uso, más o menos lo que gasta el horno en hora y media de asado contando el precalentado, según nuestra <a href="/guias/cuanto-gasta-horno-electrico/">guía del horno</a>. Con los precios medios del último mes:</p>
+      <ul>
+        <li>En valle: 2 kWh × {fmtPrice(pa.valle, 3)} €/kWh × {tax.toLocaleString('es-ES', { maximumFractionDigits: 3 })} = <strong>{eur2(ejValle)} €</strong>.</li>
+        <li>En punta: 2 kWh × {fmtPrice(pa.punta, 3)} €/kWh × {tax.toLocaleString('es-ES', { maximumFractionDigits: 3 })} = <strong>{eur2(ejPunta)} €</strong>.</li>
+      </ul>
+      <p>Es el mismo consumo y la misma tarifa; solo cambia la hora. Repetido cada día, la diferencia se nota en la factura, aunque nunca llega a la parte fija: la potencia contratada y el contador se pagan igual uses la luz a la hora que la uses. Si quieres probar con tus aparatos, usa la <a href="/calculadora-coste-electrodomesticos/">calculadora de coste por electrodoméstico</a>.</p>
+
+      <h2>Errores habituales al leer el precio de la luz</h2>
+      <ul>
+        <li><strong>Confundir el mercado mayorista con el PVPC.</strong> En las noticias se habla a menudo del precio del mercado diario, en euros por MWh. Un MWh son 1.000 kWh, así que 100 €/MWh equivalen a 0,10 €/kWh. Pero ese precio solo es una parte del PVPC: aunque el mercado marque 0 €/MWh en una hora de mucho sol, el PVPC de esa hora sigue costando por los peajes, los cargos y la parte de futuros.</li>
+        <li><strong>Comparar precios con y sin impuestos.</strong> Las webs de precios, incluida esta, suelen dar el PVPC sin impuestos para poder compararlo con las ofertas de las comercializadoras. Tu factura lleva además el impuesto eléctrico y el IVA, como en el ejemplo de arriba.</li>
+        <li><strong>Pensar que todo el mundo paga por horas.</strong> Solo el PVPC y algunas tarifas indexadas del mercado libre siguen el precio horario. Si tienes una tarifa de precio fijo, o fijo con dos o tres periodos, las subidas y bajadas de cada día no te afectan hasta que la comercializadora revisa el contrato.</li>
+        <li><strong>Creer que los cuartos de hora te obligan a algo.</strong> El paso del mercado a tramos de 15 minutos no ha cambiado lo que ve un hogar con PVPC: sigue habiendo un precio por hora y no hay que cambiar de contador ni de contrato.</li>
+      </ul>
 
       <h2>Preguntas frecuentes</h2>
       {faqs.map(([q, a]) => (<details><summary>{q}</summary><p>{a}</p></details>))}
